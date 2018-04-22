@@ -8,6 +8,9 @@ public class Interactable : MonoBehaviour
 
 	public void Interact()
 	{
-		Interacted();
+		if (Interacted != null)
+		{
+			Interacted();
+		}
 	}
 }
