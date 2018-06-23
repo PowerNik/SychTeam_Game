@@ -41,4 +41,13 @@ public class Interactor : MonoBehaviour
 			Debug.DrawRay(transform.position, direction * 0.5f, Color.red, 3);
 		}
 	}
+
+	private void OnTriggerEnter2D(Collider2D other)
+	{
+		if(other.GetComponent<Interactable>())
+		{
+			Debug.Log("Interact with " + other.name);
+			other.GetComponent<Interactable>().Interact();
+		}
+	}
 }

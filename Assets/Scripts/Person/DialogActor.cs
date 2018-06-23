@@ -27,4 +27,22 @@ public class DialogActor : MonoBehaviour
 			}
 		}
 	}
+
+	/*private void OnTriggerEnter(Collider other)
+	{
+		if (other.GetComponent<Interactable>())
+		{
+			Debug.Log("Interact with " + other.name);
+			other.GetComponent<Interactable>().Interact();
+		}
+	}
+
+	private void OnCollisionEnter(Collision collision)
+	{
+		if (collision.collider.GetComponent<Interactable>())
+		{
+			Debug.Log("Interact with " + collision.collider.name);
+			collision.collider.GetComponent<Interactable>().Interact();
+		}
+	}*/
 }
