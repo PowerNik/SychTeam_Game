@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
-public class Dialogues : MonoBehaviour {
+[CreateAssetMenu(fileName = "Dialogue", menuName = "Dialogue")]
+public class Dialogues : ScriptableObject {
 
     [HideInInspector]
     //public DialogueSystem.Window StartWindow = null;

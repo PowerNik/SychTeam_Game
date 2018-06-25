@@ -81,7 +81,8 @@ public class DialogueSystem : EditorWindow {
 
     bool CheckDialogueExists()
     {
-        if (CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow == -562 || CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow].Connections == null)
+		var curWin = CurrentDialogue.Set[CurrentDialogue.CurrentSet];
+		if (curWin.FirstWindow == -562 || curWin.Windows[curWin.FirstWindow].Connections == null)
             return false;
         else
             return true;
@@ -186,9 +187,9 @@ public class DialogueSystem : EditorWindow {
 
     bool CheckDialogue()
     {
-        if (Selection.activeTransform)
+        if (Selection.activeObject is Dialogues)
         {
-            CurrentDialogue = Selection.activeTransform.GetComponent<Dialogues>();
+			CurrentDialogue = (Dialogues)Selection.activeObject;//.GetComponent<Dialogues>();
             return true;
         }
         else

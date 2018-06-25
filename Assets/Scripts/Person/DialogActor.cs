@@ -5,6 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(Interactable))]
 public class DialogActor : MonoBehaviour
 {
+	[SerializeField]
+	private Dialogues dialog;
+
 	void Start()
 	{
 		GetComponent<Interactable>().Interacted += StartDialog;
@@ -13,9 +16,9 @@ public class DialogActor : MonoBehaviour
 	private void StartDialog()
 	{
 		var mono = ServiceLocator.GetService(ServiceType.DialogSystem);
-		if (GetComponent<Dialogues>())
+		if (dialog != null)
 		{
-			((DialogueInteraction)mono).SetDialogue(GetComponent<Dialogues>());
+			((DialogueInteraction)mono).SetDialogue(dialog);
 		}
 	}
 }

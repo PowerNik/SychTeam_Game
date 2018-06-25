@@ -185,6 +185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75115591935bf0f47b85b1f909224c5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dialog: {fileID: 0}
 --- !u!114 &18103643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,127 +320,6 @@ GameObject:
   m_PrefabParentObject: {fileID: 1318879964963038, guid: ea632940b4242d74b9c779e7f2455ee1,
     type: 2}
   m_PrefabInternal: {fileID: 157899628}
---- !u!114 &278052382
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 278052381}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b10fe5d6867c1b5449b4bf163fcd72ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Set:
-  - CurrentId: 7
-    NewWindowOpen: 0
-    FirstWindow: 0
-    Windows:
-    - ID: 0
-      Size:
-        serializedVersion: 2
-        x: 69
-        y: 130
-        width: 150
-        height: 125
-      Text: Hi!
-      Type: 0
-      NodeType: 0
-      Parent: -1
-      Trigger: 0
-      TriggerText: 
-      Connections: 02000000
-    - ID: 1
-      Size:
-        serializedVersion: 2
-        x: 715
-        y: 154
-        width: 150
-        height: 125
-      Text: Go home, son
-      Type: 0
-      NodeType: 2
-      Parent: 0
-      Trigger: 0
-      TriggerText: 
-      Connections: 
-    - ID: 2
-      Size:
-        serializedVersion: 2
-        x: 268
-        y: 131
-        width: 150
-        height: 125
-      Text: What's up?
-      Type: 1
-      NodeType: 1
-      Parent: 0
-      Trigger: 0
-      TriggerText: 
-      Connections: 030000000500000004000000
-    - ID: 3
-      Size:
-        serializedVersion: 2
-        x: 490
-        y: 59
-        width: 150
-        height: 125
-      Text: It is ok
-      Type: 2
-      NodeType: 1
-      Parent: 2
-      Trigger: 0
-      TriggerText: 
-      Connections: 01000000
-    - ID: 4
-      Size:
-        serializedVersion: 2
-        x: 473
-        y: 244
-        width: 150
-        height: 125
-      Text: 'Kill me, please
-
-        12345 11234 123123 1231231 143234 2 22 234234234  23424242  2342342342   2342423
-
-        hfghfg'
-      Type: 2
-      NodeType: 1
-      Parent: 3
-      Trigger: 0
-      TriggerText: 
-      Connections: 01000000
-    - ID: 5
-      Size:
-        serializedVersion: 2
-        x: 418
-        y: 402
-        width: 150
-        height: 125
-      Text: "\u041F\u043E\u0441\u0442\u0430\u0432\u044C \u0437\u0430\u0447\u0435\u0442!"
-      Type: 2
-      NodeType: 1
-      Parent: 2
-      Trigger: 0
-      TriggerText: 
-      Connections: 06000000
-    - ID: 6
-      Size:
-        serializedVersion: 2
-        x: 700
-        y: 412
-        width: 150
-        height: 125
-      Text: "\u0418\u0434\u0438 \u0434\u043E\u043C\u043E\u0439"
-      Type: 0
-      NodeType: 2
-      Parent: 5
-      Trigger: 0
-      TriggerText: 
-      Connections: 
-  CurrentSet: 0
-  TabList:
-  - Teacher
 --- !u!114 &278052383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,6 +331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75115591935bf0f47b85b1f909224c5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dialog: {fileID: 11400000, guid: eefab88c6b77e4546b32e83701749c76, type: 2}
 --- !u!4 &278052387 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4289378329620824, guid: ea632940b4242d74b9c779e7f2455ee1,
@@ -1389,6 +1270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75115591935bf0f47b85b1f909224c5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dialog: {fileID: 0}
 --- !u!114 &1886411400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1603,7 +1485,7 @@ Prefab:
         type: 2}
       propertyPath: npc
       value: 
-      objectReference: {fileID: 278052382}
+      objectReference: {fileID: 0}
     - target: {fileID: 114006527609186016, guid: 51753cfc5804ef9429bcc177012b2c9d,
         type: 2}
       propertyPath: nextTreeButton
@@ -1828,6 +1710,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75115591935bf0f47b85b1f909224c5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dialog: {fileID: 0}
 --- !u!114 &2107332736
 MonoBehaviour:
   m_ObjectHideFlags: 0
