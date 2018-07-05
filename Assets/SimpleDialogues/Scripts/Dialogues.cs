@@ -54,7 +54,8 @@ public class Dialogues : ScriptableObject {
         public NodeType NodeType;
         public int Parent;
         public bool Trigger;
-        public string TriggerText;
+        public Speaker speaker;
+		public string TriggerText;
 
         public List<int> Connections = new List<int>();
 
