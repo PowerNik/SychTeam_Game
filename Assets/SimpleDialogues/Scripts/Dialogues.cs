@@ -136,11 +136,16 @@ public class Dialogues : ScriptableObject {
         return Current.Trigger;
     }
 
-    /// <summary>
-    /// Returns any trigger text this current window might have
-    /// </summary>
-    /// <returns></returns>
-    public string GetTrigger()
+	public Speaker CurrentSpeaker()
+	{
+		return Current.speaker;
+	}
+
+	/// <summary>
+	/// Returns any trigger text this current window might have
+	/// </summary>
+	/// <returns></returns>
+	public string GetTrigger()
     {
         return Current.TriggerText;
     }

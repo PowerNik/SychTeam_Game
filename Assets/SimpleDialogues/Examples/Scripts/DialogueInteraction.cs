@@ -1,26 +1,27 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogueInteraction : MonoBehaviour {
-
-    Dialogues npc;
-
-    [SerializeField]
-    Text dialogueText;
-
-    [SerializeField]
-    Text leftText;
-    [SerializeField]
-    Text middleText;
-    [SerializeField]
-    Text rightText;
-
+public class DialogueInteraction : MonoBehaviour
+{
 	[SerializeField]
-	Text[] choicesText;
-	[SerializeField]
-    GameObject backgroundPanel;
+	private SpeakerHeads speakerHeads;
 
-    bool nextEnd = false;
+	[Space]
+	[SerializeField]
+	private GameObject rootPanel;
+	[SerializeField]
+	private Image leftHead;
+	[SerializeField]
+	private Image rightHead;
+
+	[Space]
+	[SerializeField]
+	private Text dialogueText;
+	[SerializeField]
+	private Text[] choicesText;
+
+	private Dialogues npc;
+	private bool nextEnd = false;
 
 	private void Awake()
 	{
@@ -45,31 +46,31 @@ public class DialogueInteraction : MonoBehaviour {
 
 	void Start()
 	{
-		backgroundPanel.SetActive(false);
+		rootPanel.SetActive(false);
 	}
 
-    public void Choice(int index)
-    {
-        if (npc.GetChoices().Length != 0)
-        {
-            npc.NextChoice(npc.GetChoices()[index]); //We make a choice out of the available choices based on the passed index.
-            Display();                               //We actually call this function on the left and right button's onclick functions
-        }
-        else
-        {
-            Progress();
-        }
-    }
+	public void Choice(int index)
+	{
+		if (npc.GetChoices().Length != 0)
+		{
+			npc.NextChoice(npc.GetChoices()[index]); //We make a choice out of the available choices based on the passed index.
+			Display();                               //We actually call this function on the left and right button's onclick functions
+		}
+		else
+		{
+			Progress();
+		}
+	}
 
-    public void Progress()
-    {
-        npc.Next(); //This function returns the number of choices it has, in my case I'm checking that in the Display() function though.
-        Display();
-    }
+	public void Progress()
+	{
+		npc.Next(); //This function returns the number of choices it has, in my case I'm checking that in the Display() function though.
+		Display();
+	}
 
 	public void Display()
 	{
-		backgroundPanel.SetActive(!nextEnd);
+		rootPanel.SetActive(!nextEnd);
 
 		dialogueText.text = npc.GetCurrentDialogue();
 
@@ -95,6 +96,21 @@ public class DialogueInteraction : MonoBehaviour {
 		{
 			choicesText[0].text = "Continue";
 			choicesText[0].transform.parent.gameObject.SetActive(true);
+		}
+
+		var speaker = npc.CurrentSpeaker();
+		var head = speakerHeads.GetHead(speaker);
+		if (speaker == Speaker.Victor || speaker == Speaker.Victor_young)
+		{
+			rightHead.gameObject.SetActive(true);
+			leftHead.gameObject.SetActive(false);
+			rightHead.sprite = head;
+		}
+		else
+		{
+			rightHead.gameObject.SetActive(false);
+			leftHead.gameObject.SetActive(true);
+			leftHead.sprite = head;
 		}
 
 		if (npc.End()) //If this is the last dialogue, set it so the next time we hit "Continue" it will hide the panel

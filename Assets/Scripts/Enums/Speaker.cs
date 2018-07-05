@@ -1,6 +1,7 @@
 public enum Speaker 
 {
-	Teacher = 0,
-	Victor = 1,
+	Victor = 0,
+	Victor_young = 1,
+	Teacher = 2,
 
 }
