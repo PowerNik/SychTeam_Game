@@ -874,17 +874,22 @@ public class DialogueSystem : EditorWindow {
             if(GUI.Button(new Rect(135, 0, 15, 15), "+")) AddWindowAfter(Win) ;
         }
 
-        Win.Trigger = GUI.Toggle(new Rect(10, 100, 60, 30), Win.Trigger, "Trigger");
+        /*Win.Trigger = GUI.Toggle(new Rect(10, 100, 60, 30), Win.Trigger, "Trigger");
         if (Win.Trigger)
         {
             Win.TriggerText = GUI.TextField(new Rect(70, 100, 70, 20), Win.TriggerText);
         }
         else
-            Win.TriggerText = "";
+            Win.TriggerText = "";*/
 
         Win.Text = GUI.TextArea(new Rect(0, 15, xSize, ySize), Win.Text);
 
-        GUI.DragWindow();
+		GUI.Label(new Rect(0, 100, 70, 20), "Speaker: ");
+		Win.speaker = (Speaker)EditorGUI.EnumPopup(
+			new Rect(70, 103, 70, 20),
+			Win.speaker);
+
+		GUI.DragWindow();
     }
 
     void AddNewWindow(int winID)

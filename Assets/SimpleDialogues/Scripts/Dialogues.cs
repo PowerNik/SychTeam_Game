@@ -54,7 +54,8 @@ public class Dialogues : ScriptableObject {
         public NodeType NodeType;
         public int Parent;
         public bool Trigger;
-        public string TriggerText;
+        public Speaker speaker;
+		public string TriggerText;
 
         public List<int> Connections = new List<int>();
 
@@ -135,11 +136,16 @@ public class Dialogues : ScriptableObject {
         return Current.Trigger;
     }
 
-    /// <summary>
-    /// Returns any trigger text this current window might have
-    /// </summary>
-    /// <returns></returns>
-    public string GetTrigger()
+	public Speaker CurrentSpeaker()
+	{
+		return Current.speaker;
+	}
+
+	/// <summary>
+	/// Returns any trigger text this current window might have
+	/// </summary>
+	/// <returns></returns>
+	public string GetTrigger()
     {
         return Current.TriggerText;
     }
