@@ -11,10 +11,177 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b10fe5d6867c1b5449b4bf163fcd72ec, type: 3}
   m_Name: Teacher
   m_EditorClassIdentifier: 
+  Current:
+    ID: 0
+    Size:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    Text: 
+    Type: 0
+    NodeType: 0
+    Parent: 0
+    Trigger: 0
+    speaker: 0
+    TriggerText: 
+    Connections: 
   Set:
-  - CurrentId: 0
+  - CurrentId: 11
     NewWindowOpen: 0
-    FirstWindow: -562
-    Windows: []
+    FirstWindow: 0
+    Windows:
+    - ID: 0
+      Size:
+        serializedVersion: 2
+        x: 27
+        y: 84
+        width: 150
+        height: 125
+      Text: Hi
+      Type: 0
+      NodeType: 0
+      Parent: -1
+      Trigger: 0
+      speaker: 2
+      TriggerText: 
+      Connections: 01000000
+    - ID: 1
+      Size:
+        serializedVersion: 2
+        x: 25
+        y: 246
+        width: 150
+        height: 125
+      Text: Zdorov
+      Type: 0
+      NodeType: 1
+      Parent: 0
+      Trigger: 0
+      speaker: 1
+      TriggerText: 
+      Connections: 02000000
+    - ID: 2
+      Size:
+        serializedVersion: 2
+        x: 211
+        y: 160
+        width: 150
+        height: 125
+      Text: Kak dela?
+      Type: 1
+      NodeType: 1
+      Parent: 1
+      Trigger: 0
+      speaker: 2
+      TriggerText: 
+      Connections: 0300000005000000
+    - ID: 3
+      Size:
+        serializedVersion: 2
+        x: 385
+        y: 220
+        width: 150
+        height: 125
+      Text: Ubey menya
+      Type: 2
+      NodeType: 1
+      Parent: 2
+      Trigger: 0
+      speaker: 1
+      TriggerText: 
+      Connections: 08000000
+    - ID: 5
+      Size:
+        serializedVersion: 2
+        x: 384
+        y: 49
+        width: 150
+        height: 125
+      Text: Hochu zachet!
+      Type: 2
+      NodeType: 1
+      Parent: 2
+      Trigger: 0
+      speaker: 1
+      TriggerText: 
+      Connections: 06000000
+    - ID: 6
+      Size:
+        serializedVersion: 2
+        x: 547
+        y: 51
+        width: 150
+        height: 125
+      Text: Hochu zachet!
+      Type: 0
+      NodeType: 1
+      Parent: 5
+      Trigger: 0
+      speaker: 1
+      TriggerText: 
+      Connections: 09000000
+    - ID: 7
+      Size:
+        serializedVersion: 2
+        x: 728
+        y: 222
+        width: 150
+        height: 125
+      Text: Okstis', otrok
+      Type: 0
+      NodeType: 1
+      Parent: 3
+      Trigger: 0
+      speaker: 2
+      TriggerText: 
+      Connections: 0a000000
+    - ID: 8
+      Size:
+        serializedVersion: 2
+        x: 545
+        y: 220
+        width: 150
+        height: 125
+      Text: Ubey menya
+      Type: 0
+      NodeType: 1
+      Parent: 3
+      Trigger: 0
+      speaker: 1
+      TriggerText: 
+      Connections: 07000000
+    - ID: 9
+      Size:
+        serializedVersion: 2
+        x: 741
+        y: 50
+        width: 150
+        height: 125
+      Text: Pshel von
+      Type: 0
+      NodeType: 2
+      Parent: 6
+      Trigger: 0
+      speaker: 2
+      TriggerText: 
+      Connections: 
+    - ID: 10
+      Size:
+        serializedVersion: 2
+        x: 904
+        y: 223
+        width: 150
+        height: 125
+      Text: Okay
+      Type: 0
+      NodeType: 2
+      Parent: 7
+      Trigger: 0
+      speaker: 1
+      TriggerText: 
+      Connections: 
   CurrentSet: 0
-  TabList: []
+  TabList:
+  - Teacher

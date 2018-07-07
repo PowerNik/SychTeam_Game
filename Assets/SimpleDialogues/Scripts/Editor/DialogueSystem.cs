@@ -76,6 +76,7 @@ public class DialogueSystem : EditorWindow {
     {
         Dialogues.Window NewWindow = new Dialogues.Window(CurrentDialogue.Set[CurrentDialogue.CurrentSet].CurrentId, ParentId, new Rect(Position, WindowSize), Type);
         CurrentDialogue.Set[CurrentDialogue.CurrentSet].CurrentId++;
+		EditorUtility.SetDirty(CurrentDialogue);
         return NewWindow;
     }
 
@@ -237,7 +238,8 @@ public class DialogueSystem : EditorWindow {
             WindowClickedOn.Connections.Add(NewlyCreatedWindow.ID);
         }
         CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Add(NewlyCreatedWindow);
-        return NewlyCreatedWindow;
+		EditorUtility.SetDirty(CurrentDialogue);
+		return NewlyCreatedWindow;
     }
 
     void AddWindowBefore(object win)
@@ -245,7 +247,6 @@ public class DialogueSystem : EditorWindow {
         Undo.RecordObject(CurrentDialogue, "Dialogue");
 
         Dialogues.Window Curr = (Dialogues.Window)win;
-
 
         //If this is the first window
         if (Curr.ID == CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow)
@@ -266,12 +267,14 @@ public class DialogueSystem : EditorWindow {
             PrevWindow.Connections.Remove(Curr.ID);
         }
 
-    }
+		EditorUtility.SetDirty(CurrentDialogue);
+	}
+
     void AddWindowAfter(object win)
     {
         Undo.RecordObject(CurrentDialogue, "Dialogue");
 
-        Dialogues.Window Curr = (Dialogues.Window)win;
+		Dialogues.Window Curr = (Dialogues.Window)win;
 
         Dialogues.Window NewlyCreatedWindow = CreateNewWindow(Curr.Size.position + new Vector2(160, 0),Curr.ID);
 
@@ -282,6 +285,8 @@ public class DialogueSystem : EditorWindow {
         Curr.Connections.Clear();
         Curr.Connections.Add(NewlyCreatedWindow.ID);
         CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Add(NewlyCreatedWindow);
+
+		EditorUtility.SetDirty(CurrentDialogue);
     }
 
     void RemoveWindow(object win)
@@ -324,7 +329,9 @@ public class DialogueSystem : EditorWindow {
         }
         CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Remove(Curr);
         ClearIds();
-    }
+
+		EditorUtility.SetDirty(CurrentDialogue);
+	}
 
     void RemoveWindowTree(object win)
     {
@@ -340,9 +347,11 @@ public class DialogueSystem : EditorWindow {
         Dialogues.Window PrevWindow = FindPreviousWindow(Curr);
         Curr.Parent = -2;
         PrevWindow.Connections.Remove(Curr.ID);
-    }
+		EditorUtility.SetDirty(CurrentDialogue);
 
-    void CheckConnections()
+	}
+
+	void CheckConnections()
     {
         for (int i = 0; i < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Count; i++)
         {
@@ -352,9 +361,11 @@ public class DialogueSystem : EditorWindow {
                 RemoveWindow(CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i]);
             }
         }
-    }
+		EditorUtility.SetDirty(CurrentDialogue);
 
-    void StartConnection(object win)
+	}
+
+	void StartConnection(object win)
     {
         Connecting = true;
         ConnectingCurrent = (Dialogues.Window)win;
@@ -375,7 +386,9 @@ public class DialogueSystem : EditorWindow {
             if (Curr.Connections.Count > 1)
                 Curr.Type = Dialogues.WindowTypes.Choice;
 
-            return;
+			EditorUtility.SetDirty(CurrentDialogue);
+
+			return;
         }
 
         for (int i = 0; i < ConnectingCurrent.Connections.Count; i++)
@@ -390,9 +403,11 @@ public class DialogueSystem : EditorWindow {
 
         ConnectingCurrent.Connections.Add(Curr.ID);
         Connecting = false;
-    }
+		EditorUtility.SetDirty(CurrentDialogue);
 
-    void EstablishNewWindowConnection(object data)
+	}
+
+	void EstablishNewWindowConnection(object data)
     {
         object[] Data = (object[])data;
         Vector2 Position = (Vector2)Data[0];
@@ -400,9 +415,11 @@ public class DialogueSystem : EditorWindow {
 
         object[] Vals = { Position, ConnectingCurrent, Type };
         CreateConnection(AddWindow(Vals));
-    }
+		EditorUtility.SetDirty(CurrentDialogue);
 
-    void RemoveConnection(object data)
+	}
+
+	void RemoveConnection(object data)
     {
         object[] Data = (object[])data;
         Dialogues.Window Curr = (Dialogues.Window)Data[0];
@@ -423,9 +440,12 @@ public class DialogueSystem : EditorWindow {
         if(Remove)
             CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Remove(CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(ToRemove));
         Curr.Connections.Remove(ToRemove);
-    }
 
-    void CancelConnection()
+		EditorUtility.SetDirty(CurrentDialogue);
+
+	}
+
+	void CancelConnection()
     {
         Connecting = false;
     }
@@ -456,15 +476,24 @@ public class DialogueSystem : EditorWindow {
     {
         CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Clear();
         CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow = -562;
-    }
 
-    #endregion
-    
-    
+		EditorUtility.SetDirty(CurrentDialogue);
+
+	}
+
+	void SaveChanges()
+	{
+		EditorUtility.SetDirty(CurrentDialogue);
+		AssetDatabase.SaveAssets();
+	}
+
+	#endregion
 
 
 
-    void DrawConnections(Color LineColor)
+
+
+	void DrawConnections(Color LineColor)
     {
         if (!CheckDialogueExists()) return;
         //Goes through the window's connections
@@ -679,9 +708,11 @@ public class DialogueSystem : EditorWindow {
         if(Connecting)
             Menu.AddItem(new GUIContent("Cancel"), false, CancelConnection);
 
-    }
-    
-    private void OnGUI()
+		EditorUtility.SetDirty(CurrentDialogue);
+
+	}
+
+	private void OnGUI()
     {
         CheckDialogue();
 
@@ -719,7 +750,8 @@ public class DialogueSystem : EditorWindow {
             CurrentDialogue.CurrentSet = CurrentTab;
 
             //Creates large scroll view for the work area
-            ScrollPosition = GUI.BeginScrollView(new Rect(0, 0, position.width, position.height), ScrollPosition, new Rect(Vector2.zero, WorkSize), GUIStyle.none, GUIStyle.none);
+            ScrollPosition = GUI.BeginScrollView(new Rect(0, 0, position.width, position.height), 
+				ScrollPosition, new Rect(Vector2.zero, WorkSize), GUIStyle.none, GUIStyle.none);
             //Makes the background a dark gray
             GUI.DrawTexture(new Rect(0, 0, WorkSize.x, WorkSize.y), BackgroundTexture, ScaleMode.StretchToFill);
             Handles.BeginGUI();
@@ -778,8 +810,12 @@ public class DialogueSystem : EditorWindow {
                     GenericMenu Menu = new GenericMenu();
 
                     BuildMenus(Menu);
-                    if (CheckDialogueExists())
-                        Menu.AddItem(new GUIContent("Clear All"), false, Clear);
+					if (CheckDialogueExists())
+					{
+						Menu.AddItem(new GUIContent("Save Changes"), false, SaveChanges);
+						Menu.AddItem(new GUIContent(""), false, () => { });
+						Menu.AddItem(new GUIContent("Clear All"), false, Clear);
+					}
                     Menu.ShowAsContext();
                 }
             }
@@ -923,6 +959,8 @@ public class DialogueSystem : EditorWindow {
         }
 
         GUI.DragWindow();
-    }
-    
+		EditorUtility.SetDirty(CurrentDialogue);
+
+	}
+
 }

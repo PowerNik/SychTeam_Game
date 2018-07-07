@@ -509,7 +509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75115591935bf0f47b85b1f909224c5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialog: {fileID: 11400000, guid: fa9831e84362c9d45910b0fd54676e4e, type: 2}
+  dialog: {fileID: 11400000, guid: ac5dbee901eb1fa4ba93dd11ccd93951, type: 2}
 --- !u!4 &278052387 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4289378329620824, guid: ea632940b4242d74b9c779e7f2455ee1,
