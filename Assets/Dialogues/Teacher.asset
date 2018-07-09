@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Name: Teacher
   m_EditorClassIdentifier: 
   Current:
-    ID: 0
+    ID: 9
     Size:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
-    Text: 
+      x: 741
+      y: 50
+      width: 150
+      height: 125
+    Text: Pshel von
     Type: 0
-    NodeType: 0
-    Parent: 0
+    NodeType: 2
+    Parent: 6
     Trigger: 0
-    speaker: 0
+    speaker: 2
     TriggerText: 
     Connections: 
   Set:
