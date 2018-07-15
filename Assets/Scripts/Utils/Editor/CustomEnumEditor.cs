@@ -4,23 +4,23 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(CustomEnum))]
-public class CustomEnumWriter : Editor
+public class CustomEnumEditor : Editor
 {
-	CustomEnum myScrip;
+	CustomEnum customEnum;
 
 	string filePath = "Assets/Scripts/Enums/";
 	string fileName = "CustomEnum";
 
 	private void OnEnable()
 	{
-		myScrip = (CustomEnum)target;
+		customEnum = (CustomEnum)target;
 		fileName = target.name;
 	}
 
 	public override void OnInspectorGUI()
 	{
 		base.OnInspectorGUI();
-
+		 
 		GUI.enabled = false;
 		filePath = EditorGUILayout.TextField("Path", filePath);
 		fileName = EditorGUILayout.TextField("Name", fileName);
@@ -28,7 +28,8 @@ public class CustomEnumWriter : Editor
 
 		if (GUILayout.Button("Save"))
 		{
-			EdiorMethods.WriteToEnum(filePath, fileName, myScrip.enumNames);
+			EditorUtility.SetDirty(customEnum);
+			EdiorMethods.WriteToEnum(filePath, fileName, customEnum.enumNames);
 		}
 	}
 }

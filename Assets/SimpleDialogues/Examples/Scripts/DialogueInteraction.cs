@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class DialogueInteraction : MonoBehaviour
 {
 	[SerializeField]
-	private SpeakerHeads speakerHeads;
+	private HeadKeeper headKeeper;
 
 	[Space]
 	[SerializeField]
@@ -99,7 +99,7 @@ public class DialogueInteraction : MonoBehaviour
 		}
 
 		var speaker = npc.CurrentSpeaker();
-		var head = speakerHeads.GetHead(speaker);
+		var head = headKeeper.GetHead(speaker);
 		if (speaker == Speaker.Victor || speaker == Speaker.Victor_young)
 		{
 			rightHead.gameObject.SetActive(true);
