@@ -14,11 +14,9 @@ public class HeadKeeper : ScriptableObject
 		return heads.Find(head => head.speaker == speaker).head;
 	}
 
-	/// <summary>
-	/// This function is called when the behaviour becomes disabled or inactive.
-	/// </summary>
 	void OnDisable()
 	{
 		EditorUtility.SetDirty(this);
+		AssetDatabase.SaveAssets();
 	}
 }
