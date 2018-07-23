@@ -11,7 +11,7 @@ public class HeadKeeperEditor : Editor
 	float imageSize = 80;
 
 	float verticalSpacing = 15;
-	float horizSpacing = 40;
+	float labelWidth = 150;
 
 	public override void OnInspectorGUI()
 	{     
@@ -50,7 +50,7 @@ public class HeadKeeperEditor : Editor
 			}
 			
 			EditorGUILayout.BeginHorizontal();	
-				GUILayout.Label(speaker.ToString(), GUILayout.Width (100 + horizSpacing));	
+				GUILayout.Label((i + 1) + ": " + speaker.ToString(), GUILayout.Width (labelWidth));
 				
 				if (keeper.heads [i] != null) 
 				{					

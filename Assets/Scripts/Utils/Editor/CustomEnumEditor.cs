@@ -8,35 +8,87 @@ using System.Linq;
 public class CustomEnumEditor : Editor
 {
 	CustomEnum customEnum;
-	bool isStringsValide = true;
-	bool isStringsUnique = true;
 
 	HashSet<string> enumNamesSet = new HashSet<string>();
 	HashSet<int> nonUniqueIndices = new HashSet<int>();
+
+	bool isStringsValide = true;
+	bool isStringsUnique = true;
+
+	int capacity = 0;
+	float labelWidth = 70;
 
 	string filePath = "Assets/Scripts/Enums/";
 	string fileName = "CustomEnum";
 
 	private void OnEnable()
 	{
-		customEnum = (CustomEnum)target;
 		fileName = target.name;
+		customEnum = (CustomEnum)target;
+		capacity = customEnum.enumNames.Count;
 	}
 
 	public override void OnInspectorGUI()
 	{
-		//base.OnInspectorGUI();
-
 		isStringsValide = isStringsUnique = true;
+
+		DrawCapacity();
+		FixGroupSize();
+
 		CheckStringsUnique();
-		CheckAllStrings();
+		ValidateStrings();
 
 		DrawGUI();
 	}
 
-	private void CheckAllStrings()
+    private void DrawCapacity()
+    {
+        EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Capacity: ", GUILayout.Width (labelWidth));
+
+            int temp = EditorGUILayout.DelayedIntField(capacity);
+            capacity = (temp < 0) ? 0 : temp;
+
+            GUILayout.Space(10);
+        EditorGUILayout.EndHorizontal();
+        GUILayout.Space(10);
+    }
+
+    private void FixGroupSize()
+    {
+        int oldCapacity = customEnum.enumNames.Count;
+        if (capacity < oldCapacity)
+        {
+           customEnum.enumNames.RemoveRange(capacity, oldCapacity - capacity);
+        }
+        else
+        {
+            customEnum.enumNames.AddRange(new System.String[capacity - oldCapacity]);
+        }
+    }
+
+	private void CheckStringsUnique()
 	{
-		for (int i = 0; i < customEnum.enumNames.Count; i++)
+		enumNamesSet.Clear();
+		nonUniqueIndices.Clear();
+
+		for (int i = 0; i < capacity; i++)
+		{
+			if(enumNamesSet.Contains(customEnum.enumNames[i]))
+			{
+				nonUniqueIndices.Add(i);
+			}
+			else
+			{
+				enumNamesSet.Add(customEnum.enumNames[i]);
+			}
+		}
+		isStringsUnique = nonUniqueIndices.Count == 0;
+	}
+
+	private void ValidateStrings()
+	{
+		for (int i = 0; i < capacity; i++)
 		{
 			Color defaultColor = GUI.color;
 			if(nonUniqueIndices.Contains(i))
@@ -50,7 +102,12 @@ public class CustomEnumEditor : Editor
 				isStringsValide = false;
 			}
 
-			customEnum.enumNames[i] = EditorGUILayout.TextField(customEnum.enumNames[i]);
+			EditorGUILayout.BeginHorizontal();
+				GUILayout.Label((i + 1) + ": ", GUILayout.Width (labelWidth));
+				customEnum.enumNames[i] = EditorGUILayout.TextField(customEnum.enumNames[i]);
+				GUILayout.Space(10);
+			EditorGUILayout.EndHorizontal();
+
 			GUI.color = defaultColor;
 		}
 	}
@@ -70,25 +127,6 @@ public class CustomEnumEditor : Editor
 		return true;
 	}
 
-	private void CheckStringsUnique()
-	{
-		enumNamesSet.Clear();
-		nonUniqueIndices.Clear();
-
-		for (int i = 0; i < customEnum.enumNames.Count; i++)
-		{
-			if(enumNamesSet.Contains(customEnum.enumNames[i]))
-			{
-				nonUniqueIndices.Add(i);
-			}
-			else
-			{
-				enumNamesSet.Add(customEnum.enumNames[i]);
-			}
-		}
-		isStringsUnique = nonUniqueIndices.Count == 0;
-	}
-
 	private void DrawGUI()
 	{
 		GUILayout.Space(10);
@@ -96,13 +134,19 @@ public class CustomEnumEditor : Editor
 			if (GUILayout.Button("Add new", GUILayout.Height(25)))
 			{
 				customEnum.enumNames.Add(customEnum.enumNames.Last());
+				capacity++;
 			}
 
 			GUILayout.Space(20);
 			if (GUILayout.Button("Remove last", GUILayout.Height(25)))
 			{
 				customEnum.enumNames.Remove(customEnum.enumNames.Last());
+				if(capacity > 0)
+				{
+					capacity--;
+				}
 			}
+			GUILayout.Space(10);
 		EditorGUILayout.EndHorizontal();
 		GUILayout.Space(10);
 
