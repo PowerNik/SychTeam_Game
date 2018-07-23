@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Dialogue", menuName = "Dialogue")]
@@ -183,12 +184,15 @@ public class Dialogues : ScriptableObject
 			return new string[] { };
 		else
 		{
-			List<string> Choices = new List<string>();
+			List<Window> options = new List<Window>();
 			for (int i = 0; i < Current.Connections.Count; i++)
 			{
-				Choices.Add(Set[CurrentSet].GetWindow(Current.Connections[i]).Text);
+				options.Add(Set[CurrentSet].GetWindow(Current.Connections[i]));
 			}
-			return Choices.ToArray();
+			var choises = options.OrderBy(w => w.Size.y)
+			.Select(w => w.Text)
+			.ToArray();
+			return choises;
 		}
 	}
 
