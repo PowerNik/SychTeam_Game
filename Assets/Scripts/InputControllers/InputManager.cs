@@ -25,7 +25,7 @@ public class InputManager : MonoBehaviour
 	
 	void Update () 
 	{
-		inputs[currentInput].HandleInput();
+		inputs[currentInput].UpdateHandleInput();
 	}
 
 	public void ChangeInput(InputType type)
@@ -38,6 +38,8 @@ public class InputManager : MonoBehaviour
 		yield return null;
 
 		inputs[currentInput].StopHandleInput();
+		
 		currentInput = type;
+		inputs[currentInput].StartHandleInput();
 	}
 }

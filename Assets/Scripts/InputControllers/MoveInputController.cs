@@ -16,7 +16,13 @@ public class MoveInputController : InputController
 	protected KeyCode downKey = KeyCode.S;
 	protected KeyCode rightKey = KeyCode.D;
 
-    public override void HandleInput()
+    #region InputController
+    public override void StartHandleInput()
+    {
+        
+    }
+
+    public override void UpdateHandleInput()
     {
         MoveInput();
         InteractInput();
@@ -26,6 +32,8 @@ public class MoveInputController : InputController
     {
         Move(Vector2.zero);
     }
+
+    #endregion
 
     private void InteractInput()
     {
