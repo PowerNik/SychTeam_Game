@@ -121,10 +121,6 @@ public class Dialogues : ScriptableObject
 		return TabList[CurrentSet];
 	}
 
-	/// <summary>
-	/// Returns if you're at the end of the dialogue tree
-	/// </summary>
-	/// <returns></returns>
 	public bool End()
 	{
 		if (Current.Connections.Count == 0)
@@ -133,10 +129,6 @@ public class Dialogues : ScriptableObject
 			return false;
 	}
 
-	/// <summary>
-	/// Checks if the current window has a trigger
-	/// </summary>
-	/// <returns></returns>
 	public bool HasTrigger()
 	{
 		return Current.Trigger;
@@ -164,14 +156,14 @@ public class Dialogues : ScriptableObject
 	{
 		if (Current.Type == WindowTypes.Choice)
 			return Current.Connections.Count;
-		else if (Current.Connections.Count == 0)
-			return -1;
-		else
-		{
-			Current = Set[CurrentSet].GetWindow(Current.Connections[0]);
-			return 0;
-
-		}
+		else 
+			if (Current.Connections.Count == 0)
+				return -1;
+			else
+			{
+				Current = Set[CurrentSet].GetWindow(Current.Connections[0]);
+				return 0;
+			}
 	}
 
 	/// <summary>
@@ -190,8 +182,8 @@ public class Dialogues : ScriptableObject
 				options.Add(Set[CurrentSet].GetWindow(Current.Connections[i]));
 			}
 			var choises = options.OrderBy(w => w.Size.y)
-			.Select(w => w.Text)
-			.ToArray();
+				.Select(w => w.Text)
+				.ToArray();
 			return choises;
 		}
 	}

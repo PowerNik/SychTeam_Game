@@ -21,7 +21,6 @@ public class DialogueInteraction : MonoBehaviour
 	private Text[] choicesText;
 
 	private Dialogues npc;
-	private bool nextEnd = false;
 
 	private void Awake()
 	{
@@ -30,8 +29,9 @@ public class DialogueInteraction : MonoBehaviour
 
 	public void SetDialogue(Dialogues dialogues, string treeName = "")
 	{
+		FindObjectOfType<InputManager>().ChangeInput(InputType.Dialogue);
+
 		npc = dialogues;
-		nextEnd = false;
 
 		if (treeName == "")
 		{
@@ -41,6 +41,8 @@ public class DialogueInteraction : MonoBehaviour
 		{
 			npc.SetTree(treeName);
 		}
+
+		rootPanel.SetActive(true);
 		Display();
 	}
 
@@ -54,24 +56,29 @@ public class DialogueInteraction : MonoBehaviour
 		if (npc.GetChoices().Length != 0)
 		{
 			npc.NextChoice(npc.GetChoices()[index]); //We make a choice out of the available choices based on the passed index.
-			Display();                               //We actually call this function on the left and right button's onclick functions
 		}
 		else
 		{
 			Progress();
 		}
+
+		Display();
 	}
 
 	public void Progress()
 	{
+		if (npc.End()) //If this is the last dialogue, set it so the next time we hit "Continue" it will hide the panel
+		{
+			FindObjectOfType<InputManager>().ChangeInput(InputType.Move);
+			rootPanel.SetActive(false);
+			return;
+		}
+
 		npc.Next(); //This function returns the number of choices it has, in my case I'm checking that in the Display() function though.
-		Display();
 	}
 
 	public void Display()
 	{
-		rootPanel.SetActive(!nextEnd);
-
 		dialogueText.text = npc.GetCurrentDialogue();
 
 		if (npc.HasTrigger())
@@ -112,8 +119,5 @@ public class DialogueInteraction : MonoBehaviour
 			leftHead.gameObject.SetActive(true);
 			leftHead.sprite = head;
 		}
-
-		if (npc.End()) //If this is the last dialogue, set it so the next time we hit "Continue" it will hide the panel
-			nextEnd = true;
 	}
 }
