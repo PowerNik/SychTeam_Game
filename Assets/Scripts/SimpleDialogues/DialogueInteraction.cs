@@ -1,0 +1,88 @@
+﻿using UnityEngine;
+using UnityEngine.UI;
+
+public class DialogueInteraction : MonoBehaviour
+{
+	[SerializeField]
+	private GameObject rootPanel;
+
+	[SerializeField]
+	private Text phraseText;
+
+	private Dialogues npc;
+
+	private UIChoiceActor choiceActor;
+	private HeadDrawerActor headDrawer;
+
+	private void Awake()
+	{
+		ServiceLocator.Register<DialogueInteraction>(this);
+	}
+
+	private void Start()
+	{
+		headDrawer = GetComponent<HeadDrawerActor>();
+		choiceActor = GetComponent<UIChoiceActor>();
+
+		choiceActor.ChoiceApplied += Choice;
+		InputManager.Instance.DialogueInput.Continued += Continue;
+
+		rootPanel.SetActive(false);
+	}
+
+	public void SetDialogue(Dialogues dialogues, string treeName = "")
+	{
+		InputManager.Instance.ChangeInput(InputType.Dialogue);
+
+		npc = dialogues;
+
+		if (treeName == "")
+		{
+			npc.SetFirstTree();
+		}
+		else
+		{
+			npc.SetTree(treeName);
+		}
+
+		rootPanel.SetActive(true);
+		Display();
+	}
+
+	private void Choice(int index)
+	{
+		npc.NextChoice(npc.GetChoices()[index]); //We make a choice out of the available choices based on the passed index.
+		Display();
+	}
+
+	public void Continue()
+	{
+		if (npc.GetChoices().Length != 0)
+		{
+			return;
+		}
+
+		Progress();
+		Display();
+	}
+
+	private void Progress()
+	{
+		if (npc.End())
+		{
+			InputManager.Instance.ChangeInput(InputType.Move);
+			rootPanel.SetActive(false);
+			return;
+		}
+
+		npc.Next();
+	}
+
+	private void Display()
+	{
+		phraseText.text = npc.GetCurrentDialogue();
+
+		choiceActor.ShowChoices(npc.GetChoices());
+		headDrawer.ShowSpeakerHead(npc.CurrentSpeaker());
+	}
+}

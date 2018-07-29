@@ -8,10 +8,8 @@ public class Interactor : MonoBehaviour
 
 	void Start()
 	{
-		var input = FindObjectOfType<InputController>();
-
-		input.Move += OnMove;
-		input.Use += OnUse;
+		InputManager.Instance.MoveInput.Move += OnMove;
+		InputManager.Instance.MoveInput.Interact += OnInteract;
 	}
 
 	private void OnMove(Vector2 direction)
@@ -22,7 +20,7 @@ public class Interactor : MonoBehaviour
 		}
 	}
 
-	private void OnUse()
+	private void OnInteract()
 	{
 		RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 0.5f);
 

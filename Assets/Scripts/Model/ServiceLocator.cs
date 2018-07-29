@@ -1,24 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ServiceType
-{
-	DialogSystem = 0,
-}
-
 public static class ServiceLocator
 {
-	private static Dictionary<ServiceType, MonoBehaviour> serviceDict = new Dictionary<ServiceType, MonoBehaviour>();
+	private static Dictionary<Type, object> serviceDict = new Dictionary<Type, object>();
 
-	public static void SetService(ServiceType type, MonoBehaviour monobeh)
+	public static void Register<T>(T monobeh)
 	{
-		serviceDict[type] = monobeh;
+		serviceDict[typeof(T)] = monobeh;
 	}
 
-	public static MonoBehaviour GetService(ServiceType type)
+	public static T GetService<T>()
 	{
-		return serviceDict[type];
+		return (T)serviceDict[typeof(T)];
 	}
-
 }
