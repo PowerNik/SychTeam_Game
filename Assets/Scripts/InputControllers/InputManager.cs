@@ -32,7 +32,7 @@ public class InputManager : MonoBehaviour
 		currentInput = InputType.Move;
 	}
 	
-	void LateUpdate () 
+	void Update () 
 	{
 		inputs[currentInput].UpdateHandleInput();
 	}

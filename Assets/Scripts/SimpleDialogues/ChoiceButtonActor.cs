@@ -5,9 +5,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ChoiceButtonActor : MonoBehaviour, IPointerEnterHandler
+public class ChoiceButtonActor : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler
 {
 	public Action ButtonHovered;
+	public Action ButtonClicked;
 
 	[SerializeField]
 	private Text choiceText;
@@ -32,5 +33,10 @@ public class ChoiceButtonActor : MonoBehaviour, IPointerEnterHandler
 	{
 		ButtonHovered();
 		Select();
+	}
+
+	public void OnPointerClick(PointerEventData eventData)
+	{
+		ButtonClicked();
 	}
 }

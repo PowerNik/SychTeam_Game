@@ -26,6 +26,7 @@ public class DialogueInteraction : MonoBehaviour
 
 		choiceActor.ChoiceApplied += Choice;
 		InputManager.Instance.DialogueInput.Continued += Continue;
+		phraseText.GetComponent<Button>().onClick.AddListener(Continue);
 
 		rootPanel.SetActive(false);
 	}
@@ -51,18 +52,27 @@ public class DialogueInteraction : MonoBehaviour
 
 	private void Choice(int index)
 	{
-		npc.NextChoice(npc.GetChoices()[index]); //We make a choice out of the available choices based on the passed index.
+		npc.NextChoice(npc.GetChoices()[index]);
 		Display();
 	}
 
 	public void Continue()
 	{
-		if (npc.GetChoices().Length != 0)
+		if (npc.GetChoices().Length > 0)
 		{
-			return;
+			int index = choiceActor.ExtractCurrentChoice();
+			if(index == -1)
+			{
+				return;
+			}
+
+			npc.NextChoice(npc.GetChoices()[index]);
+		}
+		else
+		{
+			Progress();
 		}
 
-		Progress();
 		Display();
 	}
 

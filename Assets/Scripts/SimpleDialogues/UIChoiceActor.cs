@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UIChoiceActor : MonoBehaviour
@@ -17,13 +18,12 @@ public class UIChoiceActor : MonoBehaviour
 	void Start()
 	{
 		InputManager.Instance.DialogueInput.ChoiceChanged += ChangeChoiceHighlightion;
-		InputManager.Instance.DialogueInput.Continued += ApplyChoice;
 
 		for (int i = 0; i < choiceButtons.Length; i++)
 		{
 			int index = i;
 			choiceButtons[index].ButtonHovered += () => OnChoiceButtonHovered(index);
-			choiceButtons[index].GetComponent<Button>().onClick.AddListener(ApplyChoice);
+			choiceButtons[index].ButtonClicked += ApplyChoice;
 			choiceButtons[index].Deactivate();
 		}
 	}
@@ -45,12 +45,20 @@ public class UIChoiceActor : MonoBehaviour
 		}
 	}
 
-	public void OnChoiceButtonHovered(int index)
+	public int ExtractCurrentChoice()
+	{
+		int res = currentChoice;
+		Reset();
+
+		return res;
+	}
+
+	private void OnChoiceButtonHovered(int index)
 	{
 		currentChoice = index;
 	}
 
-	public void ChangeChoiceHighlightion(int delta)
+	private void ChangeChoiceHighlightion(int delta)
 	{
 		if(activeChoiceCount == 0)
 		{
@@ -59,31 +67,55 @@ public class UIChoiceActor : MonoBehaviour
 
 		if (currentChoice == -1)
 		{
-			currentChoice = 0;
+			InitializeFirstChoice(delta);
 		}
 		else
 		{
-			currentChoice += delta;
-			if (currentChoice >= 0)
-			{
-				currentChoice = currentChoice % activeChoiceCount;
-			}
-			else
-			{
-				currentChoice = activeChoiceCount + currentChoice % activeChoiceCount;
-			}
+			ProcessCurrentChoice(delta);
 		}
 
 		choiceButtons[currentChoice].Select();
 	}
 
-	public void ApplyChoice()
+	private void InitializeFirstChoice(int delta)
+	{
+		if(delta == 1)
+		{
+			currentChoice = 0;
+		}
+
+		if(delta == -1)
+		{
+			currentChoice = activeChoiceCount - 1;
+		}
+	}
+
+	private void ProcessCurrentChoice(int delta)
+	{
+		currentChoice += delta;
+		if (currentChoice >= 0)
+		{
+			currentChoice = currentChoice % activeChoiceCount;
+		}
+		else
+		{
+			currentChoice = activeChoiceCount + currentChoice % activeChoiceCount;
+		}
+	}
+
+	private void ApplyChoice()
 	{
 		if(currentChoice != -1)
 		{
 			ChoiceApplied(currentChoice);
-			currentChoice = -1;
-			activeChoiceCount = 0;
+			Reset();
 		}
+	}
+
+	private void Reset()
+	{
+		currentChoice = -1;
+		activeChoiceCount = 0;
+		EventSystem.current.SetSelectedGameObject(null);
 	}
 }
