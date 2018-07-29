@@ -9,24 +9,30 @@ public class UIChoiceActor : MonoBehaviour
 	public Action<int> ChoiceApplied;
 
 	[SerializeField]
-	private Text[] choicesText;
+	private ChoiceButtonActor[] choiceButtons;
 
 	private int currentChoice = -1;
 	private int activeChoiceCount = 0;
 
 	void Start()
 	{
-		foreach (var text in choicesText)
+		InputManager.Instance.DialogueInput.ChoiceChanged += ChangeChoiceHighlightion;
+		InputManager.Instance.DialogueInput.Continued += ApplyChoice;
+
+		for (int i = 0; i < choiceButtons.Length; i++)
 		{
-			var button = text.transform.parent.GetComponent<Button>();
+			int index = i;
+			choiceButtons[index].ButtonHovered += () => OnChoiceButtonHovered(index);
+			choiceButtons[index].GetComponent<Button>().onClick.AddListener(ApplyChoice);
+			choiceButtons[index].Deactivate();
 		}
 	}
 
 	public void ShowChoices(string[] choices)
 	{
-		foreach (var text in choicesText)
+		foreach (var choise in choiceButtons)
 		{
-			text.transform.parent.gameObject.SetActive(false);
+			choise.Deactivate();
 		}
 
 		activeChoiceCount = choices.Length;
@@ -34,21 +40,41 @@ public class UIChoiceActor : MonoBehaviour
 		{
 			for (int i = 0; i < activeChoiceCount; i++)
 			{
-				choicesText[i].transform.parent.gameObject.SetActive(true);
-				choicesText[i].text = choices[i];
+				choiceButtons[i].ShowText(choices[i]);
 			}
 		}
 	}
 
-	public void HighlighteChoiceButton(int index)
+	public void OnChoiceButtonHovered(int index)
 	{
 		currentChoice = index;
 	}
 
 	public void ChangeChoiceHighlightion(int delta)
 	{
-		currentChoice = (currentChoice + delta) % activeChoiceCount;
-		HighlighteChoiceButton(currentChoice);
+		if(activeChoiceCount == 0)
+		{
+			return;
+		}
+
+		if (currentChoice == -1)
+		{
+			currentChoice = 0;
+		}
+		else
+		{
+			currentChoice += delta;
+			if (currentChoice >= 0)
+			{
+				currentChoice = currentChoice % activeChoiceCount;
+			}
+			else
+			{
+				currentChoice = activeChoiceCount + currentChoice % activeChoiceCount;
+			}
+		}
+
+		choiceButtons[currentChoice].Select();
 	}
 
 	public void ApplyChoice()

@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 222310884670456130}
   - component: {fileID: 114152455161731618}
   - component: {fileID: 114263553826426888}
+  - component: {fileID: 114411646451419550}
   m_Layer: 5
   m_Name: FirstChoiceButton
   m_TagString: Untagged
@@ -57,6 +58,7 @@ GameObject:
   - component: {fileID: 222315188390978456}
   - component: {fileID: 114851896305835778}
   - component: {fileID: 114777952308684324}
+  - component: {fileID: 114702857607642248}
   m_Layer: 5
   m_Name: SecondChoiceButton
   m_TagString: Untagged
@@ -177,6 +179,7 @@ GameObject:
   - component: {fileID: 222494458704998436}
   - component: {fileID: 114832544158271316}
   - component: {fileID: 114584524029123958}
+  - component: {fileID: 114180255833079980}
   m_Layer: 5
   m_Name: ThirdChoiceButton
   m_TagString: Untagged
@@ -332,6 +335,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114180255833079980
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1724578035830654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4ec7df10b3831d41971686b80a03279, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  choiceText: {fileID: 114504499603529596}
 --- !u!114 &114263553826426888
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -370,18 +385,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114152455161731618}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114006527609186016}
-        m_MethodName: Choice
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114312509354947882
@@ -431,6 +435,18 @@ MonoBehaviour:
   leftHead: {fileID: 114662812151437590}
   rightHead: {fileID: 114738060602969464}
   headKeeper: {fileID: 11400000, guid: 867f8aa8eb27d3c44886ba229df80fbd, type: 2}
+--- !u!114 &114411646451419550
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1230176909514610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4ec7df10b3831d41971686b80a03279, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  choiceText: {fileID: 114512218226253154}
 --- !u!114 &114504499603529596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -535,18 +551,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114832544158271316}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114006527609186016}
-        m_MethodName: Choice
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 2
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114586170458285766
@@ -677,6 +682,18 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &114702857607642248
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1295637292344066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4ec7df10b3831d41971686b80a03279, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  choiceText: {fileID: 114312509354947882}
 --- !u!114 &114738060602969464
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -715,10 +732,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d90600acab5c64c41971fab7f00ca8ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  choicesText:
-  - {fileID: 114512218226253154}
-  - {fileID: 114312509354947882}
-  - {fileID: 114504499603529596}
+  choiceButtons:
+  - {fileID: 114411646451419550}
+  - {fileID: 114702857607642248}
+  - {fileID: 114180255833079980}
 --- !u!114 &114777952308684324
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -757,18 +774,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114851896305835778}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114006527609186016}
-        m_MethodName: Choice
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114832544158271316

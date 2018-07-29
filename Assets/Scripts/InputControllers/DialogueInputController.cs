@@ -6,12 +6,7 @@ using UnityEngine;
 public class DialogueInputController : InputController
 {
     public Action Continued;
-
     public Action<int> ChoiceChanged;
-    public override void StartHandleInput()
-    {
-
-    }
 
     public override void UpdateHandleInput()
     {

@@ -8,10 +8,8 @@ public class Interactor : MonoBehaviour
 
 	void Start()
 	{
-		var input = FindObjectOfType<InputManager>();
-
-		input.MoveInput.Move += OnMove;
-		input.MoveInput.Interact += OnInteract;
+		InputManager.Instance.MoveInput.Move += OnMove;
+		InputManager.Instance.MoveInput.Interact += OnInteract;
 	}
 
 	private void OnMove(Vector2 direction)

@@ -11,10 +11,8 @@ public class SpeedAffectorable : MonoBehaviour
 	void Start () 
 	{
 		mover = GetComponent<Mover>();
-		var input = FindObjectOfType<InputManager>();
-		input.MoveInput.Move += OnMove;
+		InputManager.Instance.MoveInput.Move += OnMove;
 	}
-	
 
 	private void OnMove(Vector2 direction)
 	{

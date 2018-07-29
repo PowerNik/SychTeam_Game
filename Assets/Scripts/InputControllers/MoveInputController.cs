@@ -17,11 +17,6 @@ public class MoveInputController : InputController
 	protected KeyCode rightKey = KeyCode.D;
 
     #region InputController
-    public override void StartHandleInput()
-    {
-        
-    }
-
     public override void UpdateHandleInput()
     {
         MoveInput();

@@ -19,16 +19,20 @@ public class DialogueInteraction : MonoBehaviour
 		ServiceLocator.Register<DialogueInteraction>(this);
 	}
 
-	void Start()
+	private void Start()
 	{
-		choiceActor = GetComponent<UIChoiceActor>();
 		headDrawer = GetComponent<HeadDrawerActor>();
+		choiceActor = GetComponent<UIChoiceActor>();
+
+		choiceActor.ChoiceApplied += Choice;
+		InputManager.Instance.DialogueInput.Continued += Continue;
+
 		rootPanel.SetActive(false);
 	}
 
 	public void SetDialogue(Dialogues dialogues, string treeName = "")
 	{
-		FindObjectOfType<InputManager>().ChangeInput(InputType.Dialogue);
+		InputManager.Instance.ChangeInput(InputType.Dialogue);
 
 		npc = dialogues;
 
@@ -45,7 +49,7 @@ public class DialogueInteraction : MonoBehaviour
 		Display();
 	}
 
-	public void Choice(int index)
+	private void Choice(int index)
 	{
 		npc.NextChoice(npc.GetChoices()[index]); //We make a choice out of the available choices based on the passed index.
 		Display();
@@ -62,11 +66,11 @@ public class DialogueInteraction : MonoBehaviour
 		Display();
 	}
 
-	public void Progress()
+	private void Progress()
 	{
 		if (npc.End())
 		{
-			FindObjectOfType<InputManager>().ChangeInput(InputType.Move);
+			InputManager.Instance.ChangeInput(InputType.Move);
 			rootPanel.SetActive(false);
 			return;
 		}
@@ -74,7 +78,7 @@ public class DialogueInteraction : MonoBehaviour
 		npc.Next();
 	}
 
-	public void Display()
+	private void Display()
 	{
 		phraseText.text = npc.GetCurrentDialogue();
 

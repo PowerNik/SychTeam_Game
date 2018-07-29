@@ -10,20 +10,29 @@ public class InputManager : MonoBehaviour
 
 	private Dictionary<InputType, InputController> inputs = new Dictionary<InputType, InputController>();
 
+	public static InputManager Instance = null;
+
 	public MoveInputController MoveInput
 	{
 		get { return (MoveInputController)inputs[InputType.Move]; }
 	}
-	
+
+	public DialogueInputController DialogueInput
+	{
+		get { return (DialogueInputController)inputs[InputType.Dialogue]; }
+	}
+
 	void Awake () 
 	{
+		Instance = this;
+
 		inputs[InputType.Move] = new MoveInputController();
 		inputs[InputType.Dialogue] = new DialogueInputController();
 
 		currentInput = InputType.Move;
 	}
 	
-	void Update () 
+	void LateUpdate () 
 	{
 		inputs[currentInput].UpdateHandleInput();
 	}
@@ -37,9 +46,7 @@ public class InputManager : MonoBehaviour
 	{
 		yield return null;
 
-		inputs[currentInput].StopHandleInput();
-		
+		inputs[currentInput].StopHandleInput();	
 		currentInput = type;
-		inputs[currentInput].StartHandleInput();
 	}
 }

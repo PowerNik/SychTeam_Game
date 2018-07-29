@@ -10,9 +10,7 @@ public class SpriteFlipper : MonoBehaviour
 	void Start()
 	{
 		renderer = GetComponent<SpriteRenderer>();
-
-		var input = FindObjectOfType<InputManager>();
-		input.MoveInput.Move += OnMove;
+		InputManager.Instance.MoveInput.Move += OnMove;
 	}
 
 	private void OnMove(Vector2 move)
