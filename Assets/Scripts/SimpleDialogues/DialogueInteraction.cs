@@ -16,7 +16,7 @@ public class DialogueInteraction : MonoBehaviour
 
 	private void Awake()
 	{
-		ServiceLocator.Register<DialogueInteraction>(this);
+		ServiceLocator.DialogueSystem = this;
 	}
 
 	private void Start()

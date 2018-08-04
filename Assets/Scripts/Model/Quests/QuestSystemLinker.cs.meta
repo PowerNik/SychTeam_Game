@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6385f29b74f75154d9a8e2fa99ad655a
+timeCreated: 1533386099
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - questSystem: {fileID: 11400000, guid: 186c8425569466a428aeb360ea738eb0, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
