@@ -133,16 +133,18 @@ public class CustomEnumEditor : Editor
 		EditorGUILayout.BeginHorizontal();	
 			if (GUILayout.Button("Add new", GUILayout.Height(25)))
 			{
-				customEnum.enumNames.Add(customEnum.enumNames.Last());
+				string newItem = capacity > 0 ? customEnum.enumNames.Last() : "";
+				customEnum.enumNames.Add(newItem);
+
 				capacity++;
 			}
 
 			GUILayout.Space(20);
 			if (GUILayout.Button("Remove last", GUILayout.Height(25)))
 			{
-				customEnum.enumNames.Remove(customEnum.enumNames.Last());
 				if(capacity > 0)
 				{
+					customEnum.enumNames.Remove(customEnum.enumNames.Last());
 					capacity--;
 				}
 			}
