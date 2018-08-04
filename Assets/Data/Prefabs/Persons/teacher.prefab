@@ -90,9 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75115591935bf0f47b85b1f909224c5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phrases:
-  - Zdorof
-  - Idi domoy
+  dialog: {fileID: 0}
 --- !u!212 &212829272490611990
 SpriteRenderer:
   m_ObjectHideFlags: 1
