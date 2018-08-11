@@ -7,7 +7,6 @@ using UnityEngine;
 public class QuestSystemEditor : Editor
 {
 	QuestSystem questSystem;
-	float labelWidth = 120;
 
 	private void OnEnable()
 	{
@@ -16,22 +15,23 @@ public class QuestSystemEditor : Editor
 
 	public override void OnInspectorGUI()
 	{
-		GUIStyle style = new GUIStyle();
-		style.fontSize = 12;
+		serializedObject.Update();
 
 		EditorGUILayout.BeginHorizontal();
-			GUILayout.Label("Quest ", style, GUILayout.Width(labelWidth));
-			GUILayout.Label("Progress", style);
+			GUILayout.Label("№       ");
+			GUILayout.Label("Quest   ");
+			GUILayout.Label("Progress");
 		EditorGUILayout.EndHorizontal();
 		GUILayout.Space(10);
 
-		for (int i = 0; i < questSystem.questList.Count; i++)
+		GUI.enabled = false;
+		var list = serializedObject.FindProperty("questList");
+		for (int i = 0; i < list.arraySize; i++)
 		{
-			EditorGUILayout.BeginHorizontal();
-				GUILayout.Label(questSystem.questList[i].questType + ": ", style, GUILayout.Width(labelWidth));
-				GUILayout.Label(questSystem.questList[i].questProgress.ToString(), style);
-			EditorGUILayout.EndHorizontal();
-			GUILayout.Space(5);
+			EditorGUILayout.PropertyField(list.GetArrayElementAtIndex(i), true);
 		}
+
+		GUI.enabled = true;
+		serializedObject.ApplyModifiedProperties();
 	}
 }
