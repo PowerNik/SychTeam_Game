@@ -32,6 +32,17 @@ public class QuestSystem : ScriptableObject
 		return result.questProgress;
 	}
 
+	public bool CheckQuestState(QuestState state)
+	{
+		QuestState result = questList.Find(pair => pair.questType == state.questType);
+		if (result == null)
+		{
+			return QuestProgress.Not_started == state.questProgress;
+		}
+
+		return result.questProgress == state.questProgress;
+	}
+
 	private void AddNewQuest(QuestType type, QuestProgress progress)
 	{
 		if (progress == QuestProgress.Started || progress == QuestProgress.Failed)

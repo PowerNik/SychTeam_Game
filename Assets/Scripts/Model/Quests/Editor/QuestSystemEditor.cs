@@ -6,13 +6,6 @@ using UnityEngine;
 [CustomEditor(typeof(QuestSystem))]
 public class QuestSystemEditor : Editor
 {
-	QuestSystem questSystem;
-
-	private void OnEnable()
-	{
-		questSystem = (QuestSystem)target;
-	}
-
 	public override void OnInspectorGUI()
 	{
 		serializedObject.Update();
