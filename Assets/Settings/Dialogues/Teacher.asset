@@ -23,9 +23,11 @@ MonoBehaviour:
     Type: 0
     NodeType: 2
     Parent: 6
-    Trigger: 0
     speaker: 2
-    TriggerText: 
+    activateQuests: []
+    showCondition:
+      states: []
+      logics: 
     Connections: 
   Set:
   - CurrentId: 11
@@ -38,14 +40,16 @@ MonoBehaviour:
         x: 27
         y: 84
         width: 150
-        height: 125
+        height: 150
       Text: Hi
       Type: 0
       NodeType: 0
       Parent: -1
-      Trigger: 0
       speaker: 2
-      TriggerText: 
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
       Connections: 01000000
     - ID: 1
       Size:
@@ -53,14 +57,16 @@ MonoBehaviour:
         x: 25
         y: 246
         width: 150
-        height: 125
+        height: 150
       Text: Zdorov
       Type: 0
       NodeType: 1
       Parent: 0
-      Trigger: 0
       speaker: 1
-      TriggerText: 
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
       Connections: 02000000
     - ID: 2
       Size:
@@ -68,14 +74,16 @@ MonoBehaviour:
         x: 211
         y: 160
         width: 150
-        height: 125
+        height: 150
       Text: Kak dela?
       Type: 1
       NodeType: 1
       Parent: 1
-      Trigger: 0
       speaker: 2
-      TriggerText: 
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
       Connections: 0300000005000000
     - ID: 3
       Size:
@@ -83,14 +91,16 @@ MonoBehaviour:
         x: 385
         y: 220
         width: 150
-        height: 125
+        height: 150
       Text: Ubey menya
       Type: 2
       NodeType: 1
       Parent: 2
-      Trigger: 0
       speaker: 1
-      TriggerText: 
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
       Connections: 08000000
     - ID: 5
       Size:
@@ -98,14 +108,16 @@ MonoBehaviour:
         x: 384
         y: 49
         width: 150
-        height: 125
+        height: 150
       Text: Hochu zachet!
       Type: 2
       NodeType: 1
       Parent: 2
-      Trigger: 0
       speaker: 1
-      TriggerText: 
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
       Connections: 06000000
     - ID: 6
       Size:
@@ -113,29 +125,33 @@ MonoBehaviour:
         x: 547
         y: 51
         width: 150
-        height: 125
+        height: 150
       Text: Hochu zachet!
       Type: 0
       NodeType: 1
       Parent: 5
-      Trigger: 0
       speaker: 1
-      TriggerText: 
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
       Connections: 09000000
     - ID: 7
       Size:
         serializedVersion: 2
-        x: 728
+        x: 742
         y: 222
         width: 150
-        height: 125
+        height: 150
       Text: Okstis', otrok
       Type: 0
       NodeType: 1
       Parent: 3
-      Trigger: 0
       speaker: 2
-      TriggerText: 
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
       Connections: 0a000000
     - ID: 8
       Size:
@@ -143,14 +159,16 @@ MonoBehaviour:
         x: 545
         y: 220
         width: 150
-        height: 125
+        height: 150
       Text: Ubey menya
       Type: 0
       NodeType: 1
       Parent: 3
-      Trigger: 0
       speaker: 1
-      TriggerText: 
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
       Connections: 07000000
     - ID: 9
       Size:
@@ -158,30 +176,73 @@ MonoBehaviour:
         x: 741
         y: 50
         width: 150
-        height: 125
+        height: 150
       Text: Pshel von
       Type: 0
       NodeType: 2
       Parent: 6
-      Trigger: 0
       speaker: 2
-      TriggerText: 
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
       Connections: 
     - ID: 10
       Size:
         serializedVersion: 2
-        x: 904
-        y: 223
+        x: 922
+        y: 222
         width: 150
-        height: 125
+        height: 150
       Text: Okay
       Type: 0
       NodeType: 2
       Parent: 7
-      Trigger: 0
       speaker: 1
-      TriggerText: 
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 
+  - CurrentId: 2
+    NewWindowOpen: 0
+    FirstWindow: 0
+    Windows:
+    - ID: 0
+      Size:
+        serializedVersion: 2
+        x: 92
+        y: 107
+        width: 150
+        height: 150
+      Text: 
+      Type: 0
+      NodeType: 0
+      Parent: -1
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 01000000
+    - ID: 1
+      Size:
+        serializedVersion: 2
+        x: 360
+        y: 105
+        width: 150
+        height: 150
+      Text: 
+      Type: 0
+      NodeType: 2
+      Parent: 0
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
       Connections: 
   CurrentSet: 0
   TabList:
   - Teacher
+  - 56

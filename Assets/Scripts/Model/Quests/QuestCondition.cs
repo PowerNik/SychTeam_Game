@@ -4,10 +4,11 @@ using UnityEngine;
 
 public enum LogicOperation { And, Or }
 
-public class QuestCondition : MonoBehaviour
+[System.Serializable]
+public class QuestCondition
 {
-	public QuestState[] states;
-	public LogicOperation[] logics;
+	public List<QuestState> states = new List<QuestState>();
+	public List<LogicOperation> logics = new List<LogicOperation>();
 
 	private List<int> orConditionList = new List<int>();
 	private List<List<int>> andConditionList = new List<List<int>>();
@@ -15,7 +16,7 @@ public class QuestCondition : MonoBehaviour
 	[ContextMenu("GetConditionValue")]
 	public bool GetConditionValue()
 	{
-		if(states.Length == 1)
+		if(states.Count == 1)
 		{
 			return ServiceLocator.QuestSystem.CheckQuestState(states[0]);
 		}
@@ -40,7 +41,7 @@ public class QuestCondition : MonoBehaviour
 
 	private void ProcessFirstValue()
 	{
-		if (logics.Length == 0)
+		if (logics.Count == 0)
 		{
 			return;
 		}
@@ -60,7 +61,7 @@ public class QuestCondition : MonoBehaviour
 
 	private void ProcessMiddleValues()
 	{
-		for (int i = 1; i < logics.Length - 1; i++)
+		for (int i = 1; i < logics.Count - 1; i++)
 		{
 			if (logics[i] == LogicOperation.And)
 			{
@@ -84,12 +85,12 @@ public class QuestCondition : MonoBehaviour
 
 	private void ProcessLastValue()
 	{
-		if (logics.Length == 0)
+		if (logics.Count == 0)
 		{
 			return;
 		}
 
-		int lastLogic = logics.Length - 1;
+		int lastLogic = logics.Count - 1;
 		if (logics[lastLogic] == LogicOperation.And)
 		{
 			andConditionList[andConditionList.Count - 1].Add(lastLogic + 1);

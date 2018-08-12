@@ -11,7 +11,7 @@ public class QuestConditionEditor : Editor
 		GUILayout.Space(10);
 		if (GUILayout.Button("Edit quest condition", GUILayout.Height(22)))
 		{
-			QuestConditionWindow.ShowWindow();
+			//QuestConditionWindow.ShowWindow(Selection.activeGameObject.GetComponent<QuestCondition>());
 		}
 		GUILayout.Space(10);
 	}

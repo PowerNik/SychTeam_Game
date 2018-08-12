@@ -6,16 +6,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Dialogue", menuName = "Dialogue")]
 public class Dialogues : ScriptableObject
 {
-
-	[HideInInspector]
-	//public DialogueSystem.Window StartWindow = null;
-
-	[SerializeField]
-	private Window Current;
-
-	//Enums
 	public enum WindowTypes { Text, Choice, ChoiceAnswer }
 	public enum NodeType { Start, Default, End }
+
+	[HideInInspector]
+	[SerializeField]
+	private Window Current;
 
 	[HideInInspector]
 	[SerializeField]
@@ -35,7 +31,11 @@ public class Dialogues : ScriptableObject
 		public int FirstWindow = -562;
 		public List<Window> Windows = new List<Window>();
 
-		public WindowSet() { CurrentId = 0; NewWindowOpen = false; }
+		public WindowSet()
+		{
+			CurrentId = 0;
+			NewWindowOpen = false;
+		}
 
 		public Window GetWindow(int ID)
 		{
@@ -48,7 +48,6 @@ public class Dialogues : ScriptableObject
 		}
 	}
 
-	//Window class, holds all the info a Window needs
 	[System.Serializable]
 	public class Window
 	{
@@ -59,33 +58,39 @@ public class Dialogues : ScriptableObject
 		public WindowTypes Type;
 		public NodeType NodeType;
 		public int Parent;
-		public bool Trigger;
 		public Speaker speaker;
-		public string TriggerText;
+
+		public List<QuestState> activateQuests = new List<QuestState>();
+		public QuestCondition showCondition = new QuestCondition();
 
 		public List<int> Connections = new List<int>();
 
-		public Window(int id, int parent, Rect newSize, WindowTypes type = WindowTypes.Text, NodeType nodeType = NodeType.Default) { ID = id; Parent = parent; Size = newSize; Text = ""; Type = type; NodeType = nodeType; Trigger = false; TriggerText = ""; }
+		public Window(int id, int parent, Rect newSize, 
+			WindowTypes type = WindowTypes.Text, NodeType nodeType = NodeType.Default)
+		{
+			ID = id;
+			Parent = parent;
+			Size = newSize;
+			Text = "";
+			Type = type;
+			NodeType = nodeType;
+		}
 
-		public bool IsChoice() { if (Type == WindowTypes.Choice) return true; else return false; }
+		public bool IsChoice()
+		{
+			return Type == WindowTypes.Choice;
+		}
 	}
-
-
-
 
 	/// <summary>
 	/// Set the current node back to the beginning
 	/// </summary>
 	/// <returns></returns>
-	public string Reset()
+	public void Reset()
 	{
 		if (CurrentSet < Set.Count)
 			Current = Set[CurrentSet].Windows[Set[CurrentSet].FirstWindow];
-		if (Current == null)
-			return "";
-		return Current.Text;
 	}
-
 
 	/// <summary>
 	/// Sets the current tree to be used
@@ -123,29 +128,12 @@ public class Dialogues : ScriptableObject
 
 	public bool End()
 	{
-		if (Current.Connections.Count == 0)
-			return true;
-		else
-			return false;
-	}
-
-	public bool HasTrigger()
-	{
-		return Current.Trigger;
+		return Current.Connections.Count == 0;
 	}
 
 	public Speaker CurrentSpeaker()
 	{
 		return Current.speaker;
-	}
-
-	/// <summary>
-	/// Returns any trigger text this current window might have
-	/// </summary>
-	/// <returns></returns>
-	public string GetTrigger()
-	{
-		return Current.TriggerText;
 	}
 
 	/// <summary>

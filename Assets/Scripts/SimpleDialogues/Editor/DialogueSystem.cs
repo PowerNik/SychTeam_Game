@@ -5,16 +5,13 @@ using UnityEngine;
 
 public class DialogueSystem : EditorWindow {
 
-    //Saved Textures
     static Texture2D BackgroundTexture;
-    static Texture2D PanelTexture;
+    static Texture2D PanelTexture; 
 
-    
-
-    //Retrieved from the dialogue component on the current selected gameObject
     Dialogues CurrentDialogue;
+
     //Ids for sending to the Windows
-    Dictionary<int, object[]> Ids = new Dictionary<int, object[]>();
+    Dictionary<int, Dialogues.Window> Ids = new Dictionary<int, Dialogues.Window>();
 
     bool Connecting = false;
     Dialogues.Window ConnectingCurrent = null;
@@ -24,43 +21,32 @@ public class DialogueSystem : EditorWindow {
     Color BigLines = new Color(0.25f, 0.25f, 0.25f);
     Color SmallLines = new Color(0.30f, 0.30f, 0.30f);
 
-    
-
     //Used for scrolling in the main view
     Vector2 ScrollPosition = Vector2.zero;
     Vector2 PreviousPosition = Vector2.zero;
-    int CurrentTab=0;
+    int CurrentTab = 0;
     bool FirstSet = false;
     
     Rect NewTree = new Rect(10, 10, 500, 200);
     string NewTreeName = "";
     string NewTreeInfo = "";
 
-    //Sizes
-    Vector2 WindowSize = new Vector2(150, 125);
+    Vector2 WindowSize = new Vector2(150, 150);
     Vector2 WorkSize = new Vector2(3000, 2000);
 
     [MenuItem("Window/Dialogue System")]
     static void Init()
     {
         EditorWindow.GetWindow(typeof(DialogueSystem));
-        MakeTextures();
-        
-    }
-
-    #region Default Functions
-
-    void Changed()
-    {
-        Repaint();
+        MakeTextures();     
     }
 
     void Update()
-    {
-        
+    {     
         //If making a connection, constantly repaint so the line draws to the mouse pointer
         if (Connecting)
             Repaint();
+
         //Calls repaint more frequently for updating when a Dialogues component is added, etc.
         Timer += 0.01f;
         if (Timer > 1)
@@ -69,12 +55,15 @@ public class DialogueSystem : EditorWindow {
             Repaint();
         }
     }
-    #endregion
 
     #region Helper Functions
     Dialogues.Window CreateNewWindow(Vector2 Position, int ParentId, Dialogues.WindowTypes Type = Dialogues.WindowTypes.Text)
     {
-        Dialogues.Window NewWindow = new Dialogues.Window(CurrentDialogue.Set[CurrentDialogue.CurrentSet].CurrentId, ParentId, new Rect(Position, WindowSize), Type);
+        Dialogues.Window NewWindow = new Dialogues.Window(
+			CurrentDialogue.Set[CurrentDialogue.CurrentSet].CurrentId, 
+			ParentId, 
+			new Rect(Position, WindowSize), 
+			Type);
         CurrentDialogue.Set[CurrentDialogue.CurrentSet].CurrentId++;
 		EditorUtility.SetDirty(CurrentDialogue);
         return NewWindow;
@@ -119,8 +108,6 @@ public class DialogueSystem : EditorWindow {
             return null;
         List<Dialogues.Window> TheList = new List<Dialogues.Window>();
 
-
-
         //Checks all the connections
         for (int i = 0; i < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Count; i++)
         {
@@ -132,8 +119,6 @@ public class DialogueSystem : EditorWindow {
                     TheList.Add(CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i]);
             }
         }
-
-
 
         return TheList;
     }
@@ -362,7 +347,6 @@ public class DialogueSystem : EditorWindow {
             }
         }
 		EditorUtility.SetDirty(CurrentDialogue);
-
 	}
 
 	void StartConnection(object win)
@@ -400,11 +384,9 @@ public class DialogueSystem : EditorWindow {
             }
         }
 
-
         ConnectingCurrent.Connections.Add(Curr.ID);
         Connecting = false;
 		EditorUtility.SetDirty(CurrentDialogue);
-
 	}
 
 	void EstablishNewWindowConnection(object data)
@@ -416,7 +398,6 @@ public class DialogueSystem : EditorWindow {
         object[] Vals = { Position, ConnectingCurrent, Type };
         CreateConnection(AddWindow(Vals));
 		EditorUtility.SetDirty(CurrentDialogue);
-
 	}
 
 	void RemoveConnection(object data)
@@ -442,7 +423,6 @@ public class DialogueSystem : EditorWindow {
         Curr.Connections.Remove(ToRemove);
 
 		EditorUtility.SetDirty(CurrentDialogue);
-
 	}
 
 	void CancelConnection()
@@ -478,7 +458,6 @@ public class DialogueSystem : EditorWindow {
         CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow = -562;
 
 		EditorUtility.SetDirty(CurrentDialogue);
-
 	}
 
 	void SaveChanges()
@@ -488,9 +467,6 @@ public class DialogueSystem : EditorWindow {
 	}
 
 	#endregion
-
-
-
 
 
 	void DrawConnections(Color LineColor)
@@ -596,10 +572,8 @@ public class DialogueSystem : EditorWindow {
                 }
             }
 
-            //Sets up the ID for the window
-            object[] Vals = { WindowList };
             if (!Ids.ContainsKey(WindowList.ID))
-                Ids.Add(WindowList.ID, Vals);
+                Ids.Add(WindowList.ID, WindowList);
 
             //Creates the actual window
             string Style = "flow node 0";
@@ -613,12 +587,12 @@ public class DialogueSystem : EditorWindow {
             FinalStyle.fontSize = 14;
             FinalStyle.contentOffset = new Vector2(0, -30);
             CheckPosition(WindowList);
-            WindowList.Size = GUI.Window(WindowList.ID, WindowList.Size, WindowFunction, BoxName, FinalStyle);
 
+			WindowList.Size.width = WindowSize.x;
+			WindowList.Size.height = WindowSize.y;
+			WindowList.Size = GUI.Window(WindowList.ID, WindowList.Size, WindowFunction, BoxName, FinalStyle);
         }
-
     }
-
 
     void BuildMenus(GenericMenu Menu)
     {
@@ -719,7 +693,6 @@ public class DialogueSystem : EditorWindow {
         if (!CurrentDialogue)
         {
             GUILayout.Label("This object has no Dialogues component");
-            //Add option to create
             return;
         }
 
@@ -732,7 +705,6 @@ public class DialogueSystem : EditorWindow {
 
         CheckConnections();
 
-        //If texture wasn't setup, set it up
         if (BackgroundTexture == null)
         {
             MakeTextures();
@@ -899,7 +871,7 @@ public class DialogueSystem : EditorWindow {
     void WindowFunction(int windowID)
     {
         if (!Ids.ContainsKey(windowID)) return;
-        Dialogues.Window Win = (Dialogues.Window)Ids[windowID][0];
+        Dialogues.Window Win = Ids[windowID];
 
         int xSize = 150;
         int ySize = 84;
@@ -910,25 +882,59 @@ public class DialogueSystem : EditorWindow {
             if(GUI.Button(new Rect(135, 0, 15, 15), "+")) AddWindowAfter(Win) ;
         }
 
-        /*Win.Trigger = GUI.Toggle(new Rect(10, 100, 60, 30), Win.Trigger, "Trigger");
-        if (Win.Trigger)
-        {
-            Win.TriggerText = GUI.TextField(new Rect(70, 100, 70, 20), Win.TriggerText);
-        }
-        else
-            Win.TriggerText = "";*/
-
         Win.Text = GUI.TextArea(new Rect(0, 15, xSize, ySize), Win.Text);
 
-		GUI.Label(new Rect(0, 100, 70, 20), "Speaker: ");
+		GUI.Label(new Rect(0, 100, 60, 20), "Speaker: ");
 		Win.speaker = (Speaker)EditorGUI.EnumPopup(
-			new Rect(70, 103, 70, 20),
+			new Rect(60, 102, 85, 20),
 			Win.speaker);
+
+		if (GUI.Button(new Rect(5, 125, 60, 20), "Quests"))
+		{
+			ShowQuestStates(windowID);
+		}
+
+		if (Win.Type == Dialogues.WindowTypes.ChoiceAnswer)
+		{
+			if (GUI.Button(new Rect(75, 125, 70, 20), "Condition"))
+			{
+				if (CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[windowID].showCondition == null)
+				{
+					CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[windowID].showCondition = new QuestCondition();
+				}
+
+				ShowQuestCondition(windowID);
+			}
+		}
 
 		GUI.DragWindow();
     }
 
-    void AddNewWindow(int winID)
+	private void ShowQuestCondition(int windowID)
+	{
+		SerializedObject obj = new SerializedObject(CurrentDialogue);
+		var set = obj.FindProperty("Set");
+		var curSet = set.GetArrayElementAtIndex(CurrentDialogue.CurrentSet);
+		var curWindow = curSet.FindPropertyRelative("Windows").GetArrayElementAtIndex(windowID);
+		var questCondition = curWindow.FindPropertyRelative("showCondition");
+
+		QuestWindow.ShowQuestWindow(obj, questCondition, "123", SaveChanges, true);
+	}
+
+	private void ShowQuestStates(int windowID)
+	{
+		SerializedObject obj = new SerializedObject(CurrentDialogue);
+		var set = obj.FindProperty("Set");
+		var curSet = set.GetArrayElementAtIndex(CurrentDialogue.CurrentSet);
+		var curWindow = curSet.FindPropertyRelative("Windows").GetArrayElementAtIndex(windowID);
+		var questStates = curWindow.FindPropertyRelative("activateQuests");
+
+		var w = CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[windowID];
+
+		QuestWindow.ShowQuestWindow(obj, questStates, "abc", SaveChanges, false);
+	}
+
+	void AddNewWindow(int winID)
     {
         NewTreeName = GUI.TextField(new Rect(100, 50, 200, 20), NewTreeName);
         GUI.Label(new Rect(100, 25, 200, 20), NewTreeInfo);
