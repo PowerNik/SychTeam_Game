@@ -204,45 +204,6 @@ MonoBehaviour:
         states: []
         logics: 
       Connections: 
-  - CurrentId: 2
-    NewWindowOpen: 0
-    FirstWindow: 0
-    Windows:
-    - ID: 0
-      Size:
-        serializedVersion: 2
-        x: 92
-        y: 107
-        width: 150
-        height: 150
-      Text: 
-      Type: 0
-      NodeType: 0
-      Parent: -1
-      speaker: 0
-      activateQuests: []
-      showCondition:
-        states: []
-        logics: 
-      Connections: 01000000
-    - ID: 1
-      Size:
-        serializedVersion: 2
-        x: 360
-        y: 105
-        width: 150
-        height: 150
-      Text: 
-      Type: 0
-      NodeType: 2
-      Parent: 0
-      speaker: 0
-      activateQuests: []
-      showCondition:
-        states: []
-        logics: 
-      Connections: 
   CurrentSet: 0
   TabList:
   - Teacher
-  - 56

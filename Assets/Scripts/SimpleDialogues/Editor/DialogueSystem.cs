@@ -871,7 +871,7 @@ public class DialogueSystem : EditorWindow {
     void WindowFunction(int windowID)
     {
         if (!Ids.ContainsKey(windowID)) return;
-        Dialogues.Window Win = Ids[windowID];
+		 Dialogues.Window Win = Ids[windowID];
 
         int xSize = 150;
         int ySize = 84;
@@ -891,47 +891,43 @@ public class DialogueSystem : EditorWindow {
 
 		if (GUI.Button(new Rect(5, 125, 60, 20), "Quests"))
 		{
-			ShowQuestStates(windowID);
+			ShowQuests(windowID, false);
 		}
 
 		if (Win.Type == Dialogues.WindowTypes.ChoiceAnswer)
 		{
 			if (GUI.Button(new Rect(75, 125, 70, 20), "Condition"))
 			{
-				if (CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[windowID].showCondition == null)
+				if (CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(windowID).showCondition == null)
 				{
-					CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[windowID].showCondition = new QuestCondition();
+					CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(windowID).showCondition = new QuestCondition();
 				}
 
-				ShowQuestCondition(windowID);
+				ShowQuests(windowID, true);
 			}
 		}
 
 		GUI.DragWindow();
     }
 
-	private void ShowQuestCondition(int windowID)
+	private void ShowQuests(int windowID, bool isConditions)
 	{
+		int windowIndex = CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindowIndex(windowID);
+
 		SerializedObject obj = new SerializedObject(CurrentDialogue);
 		var set = obj.FindProperty("Set");
 		var curSet = set.GetArrayElementAtIndex(CurrentDialogue.CurrentSet);
-		var curWindow = curSet.FindPropertyRelative("Windows").GetArrayElementAtIndex(windowID);
-		var questCondition = curWindow.FindPropertyRelative("showCondition");
+		var curWindow = curSet.FindPropertyRelative("Windows").GetArrayElementAtIndex(windowIndex);
 
-		QuestWindow.ShowQuestWindow(obj, questCondition, "123", SaveChanges, true);
-	}
+		var questProp = curWindow.FindPropertyRelative("activateQuests");
+		if (isConditions)
+			questProp = curWindow.FindPropertyRelative("showCondition");
 
-	private void ShowQuestStates(int windowID)
-	{
-		SerializedObject obj = new SerializedObject(CurrentDialogue);
-		var set = obj.FindProperty("Set");
-		var curSet = set.GetArrayElementAtIndex(CurrentDialogue.CurrentSet);
-		var curWindow = curSet.FindPropertyRelative("Windows").GetArrayElementAtIndex(windowID);
-		var questStates = curWindow.FindPropertyRelative("activateQuests");
+		string label = "Dialogue: " + CurrentDialogue.name;
+		label += "\nTab: " + CurrentDialogue.TabList[CurrentTab];
+		label += "\nWindow text: " + CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(windowID).Text;
 
-		var w = CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[windowID];
-
-		QuestWindow.ShowQuestWindow(obj, questStates, "abc", SaveChanges, false);
+		QuestWindow.ShowQuestWindow(obj, questProp, label, SaveChanges, isConditions);
 	}
 
 	void AddNewWindow(int winID)

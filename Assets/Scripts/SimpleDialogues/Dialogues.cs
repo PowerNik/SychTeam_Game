@@ -46,6 +46,17 @@ public class Dialogues : ScriptableObject
 			}
 			return null;
 		}
+
+		public int GetWindowIndex(int winID)
+		{
+			for (int i = 0; i < Windows.Count; i++)
+			{
+				if (Windows[i].ID == winID)
+					return i;
+			}
+
+			return -1;
+		}
 	}
 
 	[System.Serializable]
