@@ -13,9 +13,13 @@ public class QuestCondition
 	private List<int> orConditionList = new List<int>();
 	private List<List<int>> andConditionList = new List<List<int>>();
 
-	[ContextMenu("GetConditionValue")]
 	public bool GetConditionValue()
 	{
+		if(states.Count == 0)
+		{
+			return true;
+		}
+
 		if(states.Count == 1)
 		{
 			return ServiceLocator.QuestSystem.CheckQuestState(states[0]);

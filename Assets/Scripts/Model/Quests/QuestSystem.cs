@@ -21,6 +21,14 @@ public class QuestSystem : ScriptableObject
 		}
 	}
 
+	public void SetQuestProgress(List<QuestState> list)
+	{
+		foreach(var state in list)
+		{
+			SetQuestProgress(state.questType, state.questProgress);
+		}
+	}
+
 	public QuestProgress GetQuestProgress(QuestType type)
 	{
 		QuestState result = questList.Find(pair => pair.questType == type);
@@ -51,7 +59,7 @@ public class QuestSystem : ScriptableObject
 		}
 		else
 		{
-			throw new Exception(String.Format(
+			Debug.Log(String.Format(
 				"Try to ADD quest '{0}' with progress '{1}'",
 				type, progress));
 		}
@@ -59,13 +67,13 @@ public class QuestSystem : ScriptableObject
 
 	private void UpdateQuestProgress(QuestState questPair, QuestProgress progress)
 	{
-		if (questPair.questProgress < progress)
+		if (questPair.questProgress <= progress)
 		{
 			questPair.questProgress = progress;
 		}
 		else
 		{
-			throw new Exception(String.Format(
+			Debug.Log(String.Format(
 				"Tried to UPDATE quest '{0}' ({1}) by progress '{2}'",
 				questPair.questType, questPair.questProgress, progress));
 		}

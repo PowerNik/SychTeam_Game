@@ -153,6 +153,8 @@ public class Dialogues : ScriptableObject
 	/// <returns># = Amount of choices it has | 0 = success | -1 = end</returns>
 	public int Next()
 	{
+		ServiceLocator.QuestSystem.SetQuestProgress(Current.activateQuests);
+
 		if (Current.Type == WindowTypes.Choice)
 			return Current.Connections.Count;
 		else 
@@ -180,9 +182,12 @@ public class Dialogues : ScriptableObject
 			{
 				options.Add(Set[CurrentSet].GetWindow(Current.Connections[i]));
 			}
-			var choises = options.OrderBy(w => w.Size.y)
+
+			var optionsForShow = options.Where(w => w.showCondition.GetConditionValue());
+			var choises = optionsForShow.OrderBy(w => w.Size.y)
 				.Select(w => w.Text)
 				.ToArray();
+
 			return choises;
 		}
 	}
@@ -202,6 +207,8 @@ public class Dialogues : ScriptableObject
 			{
 				if (Set[CurrentSet].GetWindow(Current.Connections[i]).Text == choice)
 				{
+					ServiceLocator.QuestSystem.SetQuestProgress(Current.activateQuests);
+
 					Current = Set[CurrentSet].GetWindow(Set[CurrentSet].GetWindow(Current.Connections[i]).Connections[0]);
 					return true;
 				}
