@@ -10,12 +10,25 @@ public class Dialogues : ScriptableObject
 	public enum NodeType { Start, Default, End }
 
 	private Window currentWindow;
+	private List<WindowTree> treeList = new List<WindowTree>();
 
-	public List<WindowSet> Set = new List<WindowSet>();
-	public int CurrentSet = 0;
+    public int TreeCount
+    {
+        get { return treeList.Count; }
+    }
 
-	[System.Serializable]
-	public class WindowSet
+	public int CurrentTreeIndex
+    {
+        get; set;
+    }
+
+    public WindowTree CurrentTree
+    {
+        get { return treeList[CurrentTreeIndex]; }
+    }
+
+    [System.Serializable]
+	public class WindowTree
 	{
         public string Name;
         public int Importance = 0;
@@ -25,7 +38,7 @@ public class Dialogues : ScriptableObject
 		public List<Window> Windows = new List<Window>();
         public QuestCondition showCondition = new QuestCondition();
 
-        public WindowSet(string name)
+        public WindowTree(string name)
 		{
             Name = name;
 			CurrentId = 0;
@@ -76,33 +89,41 @@ public class Dialogues : ScriptableObject
 		}
 	}
 
-    /// <summary>
-    /// Set the current node back to the beginning
-    /// </summary>
-    /// <returns></returns>
     private void Reset()
     {
-        currentWindow = Set[CurrentSet].Windows[Set[CurrentSet].FirstWindow];
+        currentWindow = CurrentTree.Windows[CurrentTree.FirstWindow];
     }
 
     public string[] TabsNames
     {
         get
         {
-            return Set.Select(set => set.Name)
+            return treeList.Select(set => set.Name)
                 .ToArray();
         }
     }
 
     public void SetFirstTree(int treeIndex)
     {
-        CurrentSet = treeIndex;
+        CurrentTreeIndex = treeIndex;
         Reset();
     }
 
     public int GetNextTreeIndex(int treeIndex)
     {
-        return (treeIndex + 1) % Set.Count;
+        return (treeIndex + 1) % treeList.Count;
+    }
+
+    public void CreateTree(string name)
+    {
+        treeList.Add(new WindowTree(name));
+        CurrentTreeIndex = treeList.Count - 1;
+    }
+
+    public void RemoveCurrentTree()
+    {
+        treeList.RemoveAt(CurrentTreeIndex);
+        CurrentTreeIndex = 0;
     }
 
 	public bool End()
@@ -130,7 +151,7 @@ public class Dialogues : ScriptableObject
 				return -1;
 			else
 			{
-				currentWindow = Set[CurrentSet].GetWindow(currentWindow.Connections[0]);
+				currentWindow = CurrentTree.GetWindow(currentWindow.Connections[0]);
 				return 0;
 			}
 	}
@@ -148,7 +169,7 @@ public class Dialogues : ScriptableObject
 			List<Window> options = new List<Window>();
 			for (int i = 0; i < currentWindow.Connections.Count; i++)
 			{
-				options.Add(Set[CurrentSet].GetWindow(currentWindow.Connections[i]));
+				options.Add(CurrentTree.GetWindow(currentWindow.Connections[i]));
 			}
 
 			var optionsForShow = options.Where(w => w.showCondition.GetConditionValue());
@@ -173,11 +194,11 @@ public class Dialogues : ScriptableObject
 		{
 			for (int i = 0; i < currentWindow.Connections.Count; i++)
 			{
-				if (Set[CurrentSet].GetWindow(currentWindow.Connections[i]).Text == choice)
+				if (CurrentTree.GetWindow(currentWindow.Connections[i]).Text == choice)
 				{
 					ServiceLocator.QuestSystem.SetQuestProgress(currentWindow.activateQuests);
 
-					currentWindow = Set[CurrentSet].GetWindow(Set[CurrentSet].GetWindow(currentWindow.Connections[i]).Connections[0]);
+					currentWindow = CurrentTree.GetWindow(CurrentTree.GetWindow(currentWindow.Connections[i]).Connections[0]);
 					return true;
 				}
 			}
