@@ -15,6 +15,6 @@ public class DialogActor : MonoBehaviour
 
 	private void StartDialog()
 	{
-		ServiceLocator.DialogueSystem.SetDialogue(dialog);
+		ServiceLocator.DialogueSystem.SetDialogue(dialog, 0);
 	}
 }
