@@ -9,7 +9,7 @@ public class DialogueInteraction : MonoBehaviour
 	[SerializeField]
 	private Text phraseText;
 
-	private Dialogues npc;
+	private Dialogues dialogue;
 
 	private UIChoiceActor choiceActor;
 	private HeadDrawerActor headDrawer;
@@ -31,34 +31,31 @@ public class DialogueInteraction : MonoBehaviour
 		rootPanel.SetActive(false);
 	}
 
-	public void SetDialogue(Dialogues dialogues, string treeName = "")
+	public void SetDialogue(Dialogues dialogue, int index)
 	{
 		InputManager.Instance.ChangeInput(InputType.Dialogue);
 
-		npc = dialogues;
-
-		if (treeName == "")
-		{
-			npc.SetFirstTree();
-		}
-		else
-		{
-			npc.SetTree(treeName);
-		}
+		this.dialogue = dialogue;
+		this.dialogue.SetFirstTree(index);
 
 		rootPanel.SetActive(true);
 		Display();
 	}
 
+    public int GetNextDialogueIndex(int index)
+    {
+        return dialogue.GetNextTreeIndex(index);
+    }
+
 	private void Choice(int index)
 	{
-		npc.NextChoice(npc.GetChoices()[index]);
+		dialogue.NextChoice(dialogue.GetChoices()[index]);
 		Display();
 	}
 
 	public void Continue()
 	{
-		if (npc.GetChoices().Length > 0)
+		if (dialogue.GetChoices().Length > 0)
 		{
 			int index = choiceActor.ExtractCurrentChoice();
 			if(index == -1)
@@ -66,7 +63,7 @@ public class DialogueInteraction : MonoBehaviour
 				return;
 			}
 
-			npc.NextChoice(npc.GetChoices()[index]);
+			dialogue.NextChoice(dialogue.GetChoices()[index]);
 		}
 		else
 		{
@@ -78,21 +75,21 @@ public class DialogueInteraction : MonoBehaviour
 
 	private void Progress()
 	{
-		if (npc.End())
+		if (dialogue.End())
 		{
 			InputManager.Instance.ChangeInput(InputType.Move);
 			rootPanel.SetActive(false);
 			return;
 		}
 
-		npc.Next();
+		dialogue.Next();
 	}
 
 	private void Display()
 	{
-		phraseText.text = npc.GetCurrentDialogue();
+		phraseText.text = dialogue.GetCurrentDialogue();
 
-		choiceActor.ShowChoices(npc.GetChoices());
-		headDrawer.ShowSpeakerHead(npc.CurrentSpeaker());
+		choiceActor.ShowChoices(dialogue.GetChoices());
+		headDrawer.ShowSpeakerHead(dialogue.CurrentSpeaker());
 	}
 }

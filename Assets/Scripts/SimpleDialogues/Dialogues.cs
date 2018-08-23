@@ -33,24 +33,13 @@ public class Dialogues : ScriptableObject
 
 		public Window GetWindow(int ID)
 		{
-			for (int i = 0; i < Windows.Count; i++)
-			{
-				if (Windows[i].ID == ID)
-					return Windows[i];
-			}
-			return null;
+			return Windows.FirstOrDefault(w => w.ID == ID);
 		}
 
-		public int GetWindowIndex(int winID)
-		{
-			for (int i = 0; i < Windows.Count; i++)
-			{
-				if (Windows[i].ID == winID)
-					return i;
-			}
-
-			return -1;
-		}
+		public int GetWindowIndex(int ID)
+        { 
+			return Windows.FindIndex(w => w.ID == ID);
+        }
 	}
 
 	[System.Serializable]
@@ -87,15 +76,14 @@ public class Dialogues : ScriptableObject
 		}
 	}
 
-	/// <summary>
-	/// Set the current node back to the beginning
-	/// </summary>
-	/// <returns></returns>
-	public void Reset()
-	{
-		if (CurrentSet < Set.Count)
-			currentWindow = Set[CurrentSet].Windows[Set[CurrentSet].FirstWindow];
-	}
+    /// <summary>
+    /// Set the current node back to the beginning
+    /// </summary>
+    /// <returns></returns>
+    private void Reset()
+    {
+        currentWindow = Set[CurrentSet].Windows[Set[CurrentSet].FirstWindow];
+    }
 
     public string[] TabsNames
     {
@@ -106,39 +94,16 @@ public class Dialogues : ScriptableObject
         }
     }
 
-	/// <summary>
-	/// Sets the current tree to be used
-	/// </summary>
-	/// <param name="TreeName"></param>
-	/// <returns></returns>
-	public bool SetTree(string TreeName)
-	{
-		for (int i = 0; i < Set.Count; i++)
-		{
-			if (Set[i].Name == TreeName)
-			{
-				CurrentSet = i;
-				Reset();
-				return true;
-			}
-		}
-		return false;
-	}
+    public void SetFirstTree(int treeIndex)
+    {
+        CurrentSet = treeIndex;
+        Reset();
+    }
 
-	/// <summary>
-	/// Sets the first tree to be used
-	/// </summary>
-	/// <param name="TreeName"></param>
-	/// <returns></returns>
-	public bool SetFirstTree()
-	{
-		return SetTree(Set[0].Name);
-	}
-
-	public string GetCurrentTree()
-	{
-		return Set[CurrentSet].Name;
-	}
+    public int GetNextTreeIndex(int treeIndex)
+    {
+        return (treeIndex + 1) % Set.Count;
+    }
 
 	public bool End()
 	{
