@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum WindowTypes { Phrase, Decision, Option }
+public enum NodeType { Start, Default, End }
+
 [CreateAssetMenu(fileName = "Dialogue", menuName = "Dialogue &D")]
 public class Dialogues : ScriptableObject
 {
-    public enum WindowTypes { Phrase, Decision, Option }
-    public enum NodeType { Start, Default, End }
 
     private Window currentWindow;
     [HideInInspector]
@@ -45,7 +46,7 @@ public class Dialogues : ScriptableObject
         }
 
         public int CurrentId;
-        public int FirstWindow = -562;
+        public int FirstWindowID = -562;
         public List<Window> Windows = new List<Window>();
         public QuestCondition showCondition = new QuestCondition();
 
@@ -63,6 +64,11 @@ public class Dialogues : ScriptableObject
         public int GetWindowIndex(int ID)
         {
             return Windows.FindIndex(w => w.ID == ID);
+        }
+
+        public Window FirstWindow
+        {
+            get { return GetWindow(FirstWindowID); }
         }
     }
 
@@ -102,7 +108,7 @@ public class Dialogues : ScriptableObject
 
     private void Reset()
     {
-        currentWindow = CurrentTree.Windows[CurrentTree.FirstWindow];
+        currentWindow = CurrentTree.FirstWindow;
     }
 
     public string[] TabsNames

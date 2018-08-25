@@ -14,17 +14,17 @@ MonoBehaviour:
   treeList:
   - Name: 0 1
     CurrentId: 6
-    FirstWindow: 0
+    FirstWindowID: 0
     Windows:
     - ID: 0
       Size:
         serializedVersion: 2
-        x: 3
-        y: 88
+        x: 168
+        y: 100
         width: 150
         height: 150
       Text: 0 1
-      Type: 1
+      Type: 0
       NodeType: 0
       Parent: -1
       speaker: 0
@@ -36,12 +36,12 @@ MonoBehaviour:
     - ID: 3
       Size:
         serializedVersion: 2
-        x: 199
-        y: 44
+        x: 351
+        y: 85
         width: 150
         height: 150
       Text: 1
-      Type: 2
+      Type: 0
       NodeType: 1
       Parent: 0
       speaker: 0
@@ -53,8 +53,8 @@ MonoBehaviour:
     - ID: 5
       Size:
         serializedVersion: 2
-        x: 401
-        y: 90
+        x: 450
+        y: 261
         width: 150
         height: 150
       Text: 2
@@ -72,13 +72,13 @@ MonoBehaviour:
       logics: 
   - Name: 0 2
     CurrentId: 1
-    FirstWindow: 0
+    FirstWindowID: 0
     Windows:
     - ID: 0
       Size:
         serializedVersion: 2
-        x: 161
-        y: 86
+        x: 126
+        y: 121
         width: 150
         height: 150
       Text: 0 2
@@ -96,7 +96,7 @@ MonoBehaviour:
       logics: 
   - Name: 0 3
     CurrentId: 1
-    FirstWindow: 0
+    FirstWindowID: 0
     Windows:
     - ID: 0
       Size:
@@ -120,7 +120,7 @@ MonoBehaviour:
       logics: 
   - Name: 1 1
     CurrentId: 2
-    FirstWindow: 0
+    FirstWindowID: 0
     Windows:
     - ID: 0
       Size:
@@ -165,7 +165,7 @@ MonoBehaviour:
       logics: 
   - Name: 1 2
     CurrentId: 1
-    FirstWindow: 0
+    FirstWindowID: 0
     Windows:
     - ID: 0
       Size:
@@ -191,7 +191,7 @@ MonoBehaviour:
       logics: 
   - Name: 2 1
     CurrentId: 1
-    FirstWindow: 0
+    FirstWindowID: 0
     Windows:
     - ID: 0
       Size:
@@ -219,7 +219,7 @@ MonoBehaviour:
       logics: 00000000
   - Name: 3 1
     CurrentId: 2
-    FirstWindow: 0
+    FirstWindowID: 0
     Windows:
     - ID: 0
       Size:
@@ -268,7 +268,7 @@ MonoBehaviour:
       logics: 0000000000000000
   - Name: 3 2
     CurrentId: 2
-    FirstWindow: 0
+    FirstWindowID: 0
     Windows:
     - ID: 0
       Size:
