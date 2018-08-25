@@ -9,14 +9,14 @@ public class DialogueInteraction : MonoBehaviour
 	[SerializeField]
 	private Text phraseText;
 
-	private Dialogues npc;
+	private Dialogues dialogue;
 
 	private UIChoiceActor choiceActor;
 	private HeadDrawerActor headDrawer;
 
 	private void Awake()
 	{
-		ServiceLocator.Register<DialogueInteraction>(this);
+		ServiceLocator.DialogueSystem = this;
 	}
 
 	private void Start()
@@ -31,20 +31,12 @@ public class DialogueInteraction : MonoBehaviour
 		rootPanel.SetActive(false);
 	}
 
-	public void SetDialogue(Dialogues dialogues, string treeName = "")
+	public void SetDialogue(Dialogues dialogue, int index, out int nextIndex)
 	{
 		InputManager.Instance.ChangeInput(InputType.Dialogue);
 
-		npc = dialogues;
-
-		if (treeName == "")
-		{
-			npc.SetFirstTree();
-		}
-		else
-		{
-			npc.SetTree(treeName);
-		}
+		this.dialogue = dialogue;
+		this.dialogue.SetTree(index, out nextIndex);
 
 		rootPanel.SetActive(true);
 		Display();
@@ -52,13 +44,13 @@ public class DialogueInteraction : MonoBehaviour
 
 	private void Choice(int index)
 	{
-		npc.NextChoice(npc.GetChoices()[index]);
+		dialogue.NextChoice(dialogue.GetChoices()[index]);
 		Display();
 	}
 
 	public void Continue()
 	{
-		if (npc.GetChoices().Length > 0)
+		if (dialogue.GetChoices().Length > 0)
 		{
 			int index = choiceActor.ExtractCurrentChoice();
 			if(index == -1)
@@ -66,7 +58,7 @@ public class DialogueInteraction : MonoBehaviour
 				return;
 			}
 
-			npc.NextChoice(npc.GetChoices()[index]);
+			dialogue.NextChoice(dialogue.GetChoices()[index]);
 		}
 		else
 		{
@@ -78,21 +70,20 @@ public class DialogueInteraction : MonoBehaviour
 
 	private void Progress()
 	{
-		if (npc.End())
+		if (dialogue.End())
 		{
 			InputManager.Instance.ChangeInput(InputType.Move);
 			rootPanel.SetActive(false);
-			return;
 		}
 
-		npc.Next();
+		dialogue.Next();
 	}
 
 	private void Display()
 	{
-		phraseText.text = npc.GetCurrentDialogue();
+		phraseText.text = dialogue.GetCurrentPhrase();
 
-		choiceActor.ShowChoices(npc.GetChoices());
-		headDrawer.ShowSpeakerHead(npc.CurrentSpeaker());
+		choiceActor.ShowChoices(dialogue.GetChoices());
+		headDrawer.ShowSpeakerHead(dialogue.CurrentSpeaker());
 	}
 }

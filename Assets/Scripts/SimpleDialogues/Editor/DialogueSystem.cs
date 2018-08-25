@@ -5,16 +5,13 @@ using UnityEngine;
 
 public class DialogueSystem : EditorWindow {
 
-    //Saved Textures
     static Texture2D BackgroundTexture;
-    static Texture2D PanelTexture;
+    static Texture2D PanelTexture; 
 
-    
+    Dialogues dialogue;
 
-    //Retrieved from the dialogue component on the current selected gameObject
-    Dialogues CurrentDialogue;
     //Ids for sending to the Windows
-    Dictionary<int, object[]> Ids = new Dictionary<int, object[]>();
+    Dictionary<int, Dialogues.Window> Ids = new Dictionary<int, Dialogues.Window>();
 
     bool Connecting = false;
     Dialogues.Window ConnectingCurrent = null;
@@ -24,43 +21,31 @@ public class DialogueSystem : EditorWindow {
     Color BigLines = new Color(0.25f, 0.25f, 0.25f);
     Color SmallLines = new Color(0.30f, 0.30f, 0.30f);
 
-    
-
     //Used for scrolling in the main view
     Vector2 ScrollPosition = Vector2.zero;
     Vector2 PreviousPosition = Vector2.zero;
-    int CurrentTab=0;
-    bool FirstSet = false;
-    
+
+    bool isNewWindowShow = false;
     Rect NewTree = new Rect(10, 10, 500, 200);
     string NewTreeName = "";
     string NewTreeInfo = "";
 
-    //Sizes
-    Vector2 WindowSize = new Vector2(150, 125);
+    Vector2 WindowSize = new Vector2(150, 150);
     Vector2 WorkSize = new Vector2(3000, 2000);
 
     [MenuItem("Window/Dialogue System")]
     static void Init()
     {
         EditorWindow.GetWindow(typeof(DialogueSystem));
-        MakeTextures();
-        
-    }
-
-    #region Default Functions
-
-    void Changed()
-    {
-        Repaint();
+        MakeTextures();     
     }
 
     void Update()
-    {
-        
+    {     
         //If making a connection, constantly repaint so the line draws to the mouse pointer
         if (Connecting)
             Repaint();
+
         //Calls repaint more frequently for updating when a Dialogues component is added, etc.
         Timer += 0.01f;
         if (Timer > 1)
@@ -69,21 +54,24 @@ public class DialogueSystem : EditorWindow {
             Repaint();
         }
     }
-    #endregion
 
     #region Helper Functions
-    Dialogues.Window CreateNewWindow(Vector2 Position, int ParentId, Dialogues.WindowTypes Type = Dialogues.WindowTypes.Text)
+    Dialogues.Window CreateNewWindow(Vector2 Position, int ParentId, WindowTypes Type = WindowTypes.Phrase)
     {
-        Dialogues.Window NewWindow = new Dialogues.Window(CurrentDialogue.Set[CurrentDialogue.CurrentSet].CurrentId, ParentId, new Rect(Position, WindowSize), Type);
-        CurrentDialogue.Set[CurrentDialogue.CurrentSet].CurrentId++;
-		EditorUtility.SetDirty(CurrentDialogue);
+        Dialogues.Window NewWindow = new Dialogues.Window(
+			dialogue.CurrentTree.CurrentId, 
+			ParentId, 
+			new Rect(Position, WindowSize), 
+			Type);
+        dialogue.CurrentTree.CurrentId++;
+		EditorUtility.SetDirty(dialogue);
         return NewWindow;
     }
 
     bool CheckDialogueExists()
     {
-		var curWin = CurrentDialogue.Set[CurrentDialogue.CurrentSet];
-		if (curWin.FirstWindow == -562 || curWin.Windows[curWin.FirstWindow].Connections == null)
+		var curTree = dialogue.CurrentTree;
+		if (curTree.FirstWindowID == -562 || curTree.FirstWindow.Connections == null)
             return false;
         else
             return true;
@@ -97,17 +85,17 @@ public class DialogueSystem : EditorWindow {
     Dialogues.Window FindPreviousWindow(Dialogues.Window winToFind)
     {
         //If this is the first window, there is no previous
-        if (CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow == winToFind.ID)
+        if (dialogue.CurrentTree.FirstWindowID == winToFind.ID)
             return null;
         //Checks all the connections
-        for (int i = 0; i < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Count; i++)
+        for (int i = 0; i < dialogue.CurrentTree.Windows.Count; i++)
         {
             //If any of the connections is equal to the one we're trying to find, we return this Window
-            for (int j = 0; j < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i].Connections.Count; j++)
+            for (int j = 0; j < dialogue.CurrentTree.Windows[i].Connections.Count; j++)
             {
-                Dialogues.Window Curr = CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i].Connections[j]);
+                Dialogues.Window Curr = dialogue.CurrentTree.GetWindow(dialogue.CurrentTree.Windows[i].Connections[j]);
                 if (Curr == winToFind)
-                    return CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i];
+                    return dialogue.CurrentTree.Windows[i];
             }
         }
         return null;
@@ -115,34 +103,30 @@ public class DialogueSystem : EditorWindow {
 
     List<Dialogues.Window> FindPreviousWindows(Dialogues.Window winToFind)
     {
-        if (CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow == winToFind.ID)
+        if (dialogue.CurrentTree.FirstWindowID == winToFind.ID)
             return null;
         List<Dialogues.Window> TheList = new List<Dialogues.Window>();
 
-
-
         //Checks all the connections
-        for (int i = 0; i < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Count; i++)
+        for (int i = 0; i < dialogue.CurrentTree.Windows.Count; i++)
         {
             //If any of the connections is equal to the one we're trying to find, we return this Window
-            for (int j = 0; j < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i].Connections.Count; j++)
+            for (int j = 0; j < dialogue.CurrentTree.Windows[i].Connections.Count; j++)
             {
-                Dialogues.Window Curr = CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i].Connections[j]);
+                Dialogues.Window Curr = dialogue.CurrentTree.GetWindow(dialogue.CurrentTree.Windows[i].Connections[j]);
                 if (Curr == winToFind)
-                    TheList.Add(CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i]);
+                    TheList.Add(dialogue.CurrentTree.Windows[i]);
             }
         }
-
-
 
         return TheList;
     }
 
     bool Find(Dialogues.Window win, Dialogues.Window winToFind)
     {
-        for (int i = 0; i < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Count; i++)
+        for (int i = 0; i < dialogue.CurrentTree.Windows.Count; i++)
         {
-            if (CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i] == winToFind)
+            if (dialogue.CurrentTree.Windows[i] == winToFind)
                 return true;
         }
         return false;
@@ -190,12 +174,12 @@ public class DialogueSystem : EditorWindow {
     {
         if (Selection.activeObject is Dialogues)
         {
-			CurrentDialogue = (Dialogues)Selection.activeObject;//.GetComponent<Dialogues>();
+			dialogue = (Dialogues)Selection.activeObject;//.GetComponent<Dialogues>();
             return true;
         }
         else
         {
-            CurrentDialogue = null;
+            dialogue = null;
             GUILayout.Label("No object is currently selected");
             return false;
         }
@@ -212,13 +196,13 @@ public class DialogueSystem : EditorWindow {
 
     Dialogues.Window AddWindow(object data)
     {
-        Undo.RecordObject(CurrentDialogue, "Dialogue");
+        Undo.RecordObject(dialogue, "Dialogue");
 
         object[] Data = (object[])data;
         //Retrieving Data
         Vector2 Position = (Vector2)Data[0];
         Dialogues.Window WindowClickedOn = (Dialogues.Window)Data[1];
-        Dialogues.WindowTypes Type = (Dialogues.WindowTypes)Data[2];
+        WindowTypes Type = (WindowTypes)Data[2];
 
         int ParentId = -1;
         if (WindowClickedOn != null)
@@ -230,53 +214,53 @@ public class DialogueSystem : EditorWindow {
         if (WindowClickedOn == null)
         {
             //It is the first node
-            CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow = NewlyCreatedWindow.ID;
+            dialogue.CurrentTree.FirstWindowID = NewlyCreatedWindow.ID;
         }
         else
         {
             //It is not the first node
             WindowClickedOn.Connections.Add(NewlyCreatedWindow.ID);
         }
-        CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Add(NewlyCreatedWindow);
-		EditorUtility.SetDirty(CurrentDialogue);
+        dialogue.CurrentTree.Windows.Add(NewlyCreatedWindow);
+		EditorUtility.SetDirty(dialogue);
 		return NewlyCreatedWindow;
     }
 
     void AddWindowBefore(object win)
     {
-        Undo.RecordObject(CurrentDialogue, "Dialogue");
+        Undo.RecordObject(dialogue, "Dialogue");
 
         Dialogues.Window Curr = (Dialogues.Window)win;
 
         //If this is the first window
-        if (Curr.ID == CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow)
+        if (Curr.ID == dialogue.CurrentTree.FirstWindowID)
         {
             Dialogues.Window NewlyCreatedWindow = CreateNewWindow(Curr.Size.position - new Vector2(160, 0),-1);
             //The newly created window adds the first node as a connection
-            NewlyCreatedWindow.Connections.Add(CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow);
+            NewlyCreatedWindow.Connections.Add(dialogue.CurrentTree.FirstWindowID);
             //The first node is set to the new node
-            CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow = NewlyCreatedWindow.ID;
-            CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Add(NewlyCreatedWindow);
+            dialogue.CurrentTree.FirstWindowID = NewlyCreatedWindow.ID;
+            dialogue.CurrentTree.Windows.Add(NewlyCreatedWindow);
             return;
         }
         Dialogues.Window PrevWindow = FindPreviousWindow(Curr);
         if (PrevWindow != null)
         {
-            object[] Vals = { Curr.Size.position - new Vector2(160, 0), PrevWindow, Dialogues.WindowTypes.Text };
+            object[] Vals = { Curr.Size.position - new Vector2(160, 0), PrevWindow, WindowTypes.Phrase };
             AddWindow(Vals).Connections.Add(Curr.ID);
             PrevWindow.Connections.Remove(Curr.ID);
         }
 
-		EditorUtility.SetDirty(CurrentDialogue);
+		EditorUtility.SetDirty(dialogue);
 	}
 
     void AddWindowAfter(object win)
     {
-        Undo.RecordObject(CurrentDialogue, "Dialogue");
+        Undo.RecordObject(dialogue, "Dialogue");
 
 		Dialogues.Window Curr = (Dialogues.Window)win;
 
-        Dialogues.Window NewlyCreatedWindow = CreateNewWindow(Curr.Size.position + new Vector2(160, 0),Curr.ID);
+        Dialogues.Window NewlyCreatedWindow = CreateNewWindow(Curr.Size.position + new Vector2(160, 0), Curr.ID);
 
         for (int i = 0; i < Curr.Connections.Count; i++)
         {
@@ -284,9 +268,9 @@ public class DialogueSystem : EditorWindow {
         }
         Curr.Connections.Clear();
         Curr.Connections.Add(NewlyCreatedWindow.ID);
-        CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Add(NewlyCreatedWindow);
+        dialogue.CurrentTree.Windows.Add(NewlyCreatedWindow);
 
-		EditorUtility.SetDirty(CurrentDialogue);
+		EditorUtility.SetDirty(dialogue);
     }
 
     void RemoveWindow(object win)
@@ -295,11 +279,11 @@ public class DialogueSystem : EditorWindow {
         ClearIds();
 
         //If the window we're removing is the start window, we have a custom check
-        if (Curr.ID == CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow)
+        if (Curr.ID == dialogue.CurrentTree.FirstWindowID)
         {
             //We don't allow the user to remove the first node
             if (Curr.Connections.Count == 0)
-                CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow = -562;
+                dialogue.CurrentTree.FirstWindowID = -562;
             return;
         }
 
@@ -315,54 +299,57 @@ public class DialogueSystem : EditorWindow {
         }
         if (PrevWindow != null)
         {
-            if (Curr.Connections.Count > 1 && PrevWindow.Type == Dialogues.WindowTypes.Text)
-                PrevWindow.Type = Dialogues.WindowTypes.Choice;
-            if (PrevWindow.ID == CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow)
+            if (Curr.Connections.Count > 1 && PrevWindow.Type == WindowTypes.Phrase)
+                PrevWindow.Type = WindowTypes.Decision;
+            if (PrevWindow.ID == dialogue.CurrentTree.FirstWindowID)
                 AddWindowBefore(PrevWindow);
             //Removes the window from existence
             PrevWindow.Connections.Remove(Curr.ID);
             Curr.Parent = -2;
             for (int i = 0; i < Curr.Connections.Count; i++)
             {
-                CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(Curr.Connections[i]).Parent = -2;
+                dialogue.CurrentTree.GetWindow(Curr.Connections[i]).Parent = -2;
             }
         }
-        CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Remove(Curr);
+        dialogue.CurrentTree.Windows.Remove(Curr);
         ClearIds();
 
-		EditorUtility.SetDirty(CurrentDialogue);
+		EditorUtility.SetDirty(dialogue);
 	}
 
     void RemoveWindowTree(object win)
     {
         Dialogues.Window Curr = (Dialogues.Window)win;
         //If this is the first node, removes everything
-        if (Curr.ID == CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow)
+        if (Curr.ID == dialogue.CurrentTree.FirstWindowID)
         {
             if (Curr.Connections.Count == 0)
-                CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow = -562;
+                dialogue.CurrentTree.FirstWindowID = -562;
             return;
         }
         //Simply removes the node, and lets everything connected die
         Dialogues.Window PrevWindow = FindPreviousWindow(Curr);
         Curr.Parent = -2;
         PrevWindow.Connections.Remove(Curr.ID);
-		EditorUtility.SetDirty(CurrentDialogue);
+		EditorUtility.SetDirty(dialogue);
 
 	}
 
 	void CheckConnections()
     {
-        for (int i = 0; i < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Count; i++)
+        if (dialogue.TreeCount == 0) return;
+
+        for (int i = 0; i < dialogue.CurrentTree.Windows.Count; i++)
         {
-            List<Dialogues.Window> WindowList = FindPreviousWindows(CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i]);
-            if ((WindowList == null || WindowList.Count == 0) && CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i].NodeType != Dialogues.NodeType.Start && CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Count > 1)
+            List<Dialogues.Window> WindowList = FindPreviousWindows(dialogue.CurrentTree.Windows[i]);
+            if ((WindowList == null || WindowList.Count == 0) 
+                && dialogue.CurrentTree.Windows[i].NodeType != NodeType.Start
+                && dialogue.CurrentTree.Windows.Count > 1)
             {
-                RemoveWindow(CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i]);
+                RemoveWindow(dialogue.CurrentTree.Windows[i]);
             }
         }
-		EditorUtility.SetDirty(CurrentDialogue);
-
+		EditorUtility.SetDirty(dialogue);
 	}
 
 	void StartConnection(object win)
@@ -377,16 +364,16 @@ public class DialogueSystem : EditorWindow {
 
         if (Find(Curr, ConnectingCurrent) || ConnectingCurrent.Connections.Contains(Curr.ID))
         {
-            if (!ConnectingCurrent.Connections.Contains(Curr.ID))// && ConnectingCurrent.Type == WindowTypes.Choice)
+            if (!ConnectingCurrent.Connections.Contains(Curr.ID))
             {
                 ConnectingCurrent.Connections.Add(Curr.ID);
             }
             Connecting = false;
 
             if (Curr.Connections.Count > 1)
-                Curr.Type = Dialogues.WindowTypes.Choice;
+                Curr.Type = WindowTypes.Decision;
 
-			EditorUtility.SetDirty(CurrentDialogue);
+			EditorUtility.SetDirty(dialogue);
 
 			return;
         }
@@ -400,23 +387,20 @@ public class DialogueSystem : EditorWindow {
             }
         }
 
-
         ConnectingCurrent.Connections.Add(Curr.ID);
         Connecting = false;
-		EditorUtility.SetDirty(CurrentDialogue);
-
+		EditorUtility.SetDirty(dialogue);
 	}
 
 	void EstablishNewWindowConnection(object data)
     {
         object[] Data = (object[])data;
         Vector2 Position = (Vector2)Data[0];
-        Dialogues.WindowTypes Type = (Dialogues.WindowTypes)Data[1];
+        WindowTypes Type = (WindowTypes)Data[1];
 
         object[] Vals = { Position, ConnectingCurrent, Type };
         CreateConnection(AddWindow(Vals));
-		EditorUtility.SetDirty(CurrentDialogue);
-
+		EditorUtility.SetDirty(dialogue);
 	}
 
 	void RemoveConnection(object data)
@@ -425,24 +409,23 @@ public class DialogueSystem : EditorWindow {
         Dialogues.Window Curr = (Dialogues.Window)Data[0];
         int ToRemove = (int)Data[1];
 
-        //CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Remove(CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(ToRemove));
         bool Remove = true;
-        for (int i = 0; i < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Count; i++)
+        for (int i = 0; i < dialogue.CurrentTree.Windows.Count; i++)
         {
-            for (int j = 0; j < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i].Connections.Count; j++)
+            for (int j = 0; j < dialogue.CurrentTree.Windows[i].Connections.Count; j++)
             {
-                if(CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i].Connections[j] == ToRemove && Curr.ID != CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[i].Connections[j])
+                if(dialogue.CurrentTree.Windows[i].Connections[j] == ToRemove 
+                    && Curr.ID != dialogue.CurrentTree.Windows[i].Connections[j])
                 {
                     Remove = false;
                 }
             }
         }
         if(Remove)
-            CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Remove(CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(ToRemove));
+            dialogue.CurrentTree.Windows.Remove(dialogue.CurrentTree.GetWindow(ToRemove));
         Curr.Connections.Remove(ToRemove);
 
-		EditorUtility.SetDirty(CurrentDialogue);
-
+		EditorUtility.SetDirty(dialogue);
 	}
 
 	void CancelConnection()
@@ -453,10 +436,10 @@ public class DialogueSystem : EditorWindow {
     void Convert(object win)
     {
         Dialogues.Window Curr = (Dialogues.Window)win;
-        if (Curr.Type == Dialogues.WindowTypes.Choice)
-            Curr.Type = Dialogues.WindowTypes.Text;
+        if (Curr.Type == WindowTypes.Decision)
+            Curr.Type = WindowTypes.Phrase;
         else
-            Curr.Type = Dialogues.WindowTypes.Choice;
+            Curr.Type = WindowTypes.Decision;
     }
 
     void CheckPosition(Dialogues.Window win)
@@ -474,54 +457,55 @@ public class DialogueSystem : EditorWindow {
 
     void Clear()
     {
-        CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Clear();
-        CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow = -562;
+        dialogue.CurrentTree.Windows.Clear();
+        dialogue.CurrentTree.FirstWindowID = -562;
 
-		EditorUtility.SetDirty(CurrentDialogue);
-
+		EditorUtility.SetDirty(dialogue);
 	}
 
 	void SaveChanges()
 	{
-		EditorUtility.SetDirty(CurrentDialogue);
+		EditorUtility.SetDirty(dialogue);
 		AssetDatabase.SaveAssets();
 	}
 
 	#endregion
 
 
-
-
-
 	void DrawConnections(Color LineColor)
     {
         if (!CheckDialogueExists()) return;
         //Goes through the window's connections
-        for (int j = 0; j < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Count; j++)
+        for (int j = 0; j < dialogue.CurrentTree.Windows.Count; j++)
         {
-            for (int i = 0; i < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[j].Connections.Count; i++)
+            for (int i = 0; i < dialogue.CurrentTree.Windows[j].Connections.Count; i++)
             {
-                Dialogues.Window WindowList = CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[j];
+                Dialogues.Window WindowList = dialogue.CurrentTree.Windows[j];
 
                 Color Use = LineColor;
 
-                if (WindowList.Type == Dialogues.WindowTypes.Choice)
+                if (WindowList.Type == WindowTypes.Decision)
                     Use = Color.green;
 
                 //Draws a line with the correct color between the current window and connection
-                Handles.DrawBezier(WindowList.Size.center, CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(WindowList.Connections[i]).Size.center, new Vector2(WindowList.Size.center.x, WindowList.Size.center.y), new Vector2(CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(WindowList.Connections[i]).Size.center.x, CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(WindowList.Connections[i]).Size.center.y), Use, null, 5f);
+                Handles.DrawBezier(WindowList.Size.center, 
+                    dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center, 
+                    new Vector2(WindowList.Size.center.x, WindowList.Size.center.y), 
+                    new Vector2(dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.x, 
+                    dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).
+                    Size.center.y), Use, null, 5f);
 
                 Use = LineColor;
 
                 //Finds the center between the points
-                float xPos = (WindowList.Size.center.x) + ((CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(WindowList.Connections[i]).Size.center.x - WindowList.Size.center.x) / 2);
-                float yPos = (WindowList.Size.center.y) + ((CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(WindowList.Connections[i]).Size.center.y - WindowList.Size.center.y) / 2);
+                float xPos = (WindowList.Size.center.x) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.x - WindowList.Size.center.x) / 2);
+                float yPos = (WindowList.Size.center.y) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.y - WindowList.Size.center.y) / 2);
                 Vector2 Middle = new Vector2(xPos, yPos);
 
                 //Draws arrows 
                 DrawConnectionArrow(WindowList.Size.center, Middle, true);
-                DrawConnectionArrow(Middle, CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(WindowList.Connections[i]).Size.center, true);
-                DrawConnectionArrow(WindowList.Size.center, CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(WindowList.Connections[i]).Size.center, true);
+                DrawConnectionArrow(Middle, dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center, true);
+                DrawConnectionArrow(WindowList.Size.center, dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center, true);
             }
         }
 
@@ -536,89 +520,79 @@ public class DialogueSystem : EditorWindow {
     {
         if (CheckDialogue() && !CheckDialogueExists()) return;
 
-        for (int j = 0; j < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Count; j++)
+        for (int j = 0; j < dialogue.CurrentTree.Windows.Count; j++)
         {
-            Dialogues.Window WindowList = CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[j];
+            Dialogues.Window win = dialogue.CurrentTree.Windows[j];
 
-            List<Dialogues.Window> PrevWindow = FindPreviousWindows(WindowList);
-            if (PrevWindow != null)
+            List<Dialogues.Window> prevWindows = FindPreviousWindows(win);
+            if (prevWindows != null)
             {
-                for (int i = 0; i < PrevWindow.Count; i++)
+                for (int i = 0; i < prevWindows.Count; i++)
                 {
-                    if (PrevWindow[i].Type == Dialogues.WindowTypes.Choice)
+                    if (prevWindows[i].Type == WindowTypes.Decision)
                     {
-                        WindowList.Type = Dialogues.WindowTypes.ChoiceAnswer;
+                        win.Type = WindowTypes.Option;
                         break;
                     }
-                    if (PrevWindow[i].Type == Dialogues.WindowTypes.ChoiceAnswer && WindowList.Type == Dialogues.WindowTypes.ChoiceAnswer)
-                        WindowList.Type = Dialogues.WindowTypes.Text;
-                    if (PrevWindow[i].Type == Dialogues.WindowTypes.Text && WindowList.Type == Dialogues.WindowTypes.ChoiceAnswer)
-                        WindowList.Type = Dialogues.WindowTypes.Text;
+                    if (win.Type == WindowTypes.Option)
+                    {
+                        if (prevWindows[i].Type == WindowTypes.Option || prevWindows[i].Type == WindowTypes.Phrase)
+                            win.Type = WindowTypes.Phrase;
+                    }
                 }
             }
 
             //Default naming
-            string BoxName = "";
-            switch (WindowList.Type)
-            {
-                case Dialogues.WindowTypes.Text:
-                    BoxName = "Dialogue";
-                    break;
-                case Dialogues.WindowTypes.Choice:
-                    BoxName = "Decision";
-                    break;
-                case Dialogues.WindowTypes.ChoiceAnswer:
-                    BoxName = "Option";
-                    break;
-            }
+            string BoxName = win.Type.ToString();
+
             //Determines what type of node it is
-            if (WindowList.Connections.Count == 0 && WindowList.ID != CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow && WindowList.Type != Dialogues.WindowTypes.Choice)
-                WindowList.NodeType = Dialogues.NodeType.End;
-            else if (WindowList.ID == CurrentDialogue.Set[CurrentDialogue.CurrentSet].FirstWindow)
-                WindowList.NodeType = Dialogues.NodeType.Start;
+            if (win.Connections.Count == 0 && win.ID != dialogue.CurrentTree.FirstWindowID && win.Type != WindowTypes.Decision)
+                win.NodeType = NodeType.End;
+            else if (win.ID == dialogue.CurrentTree.FirstWindowID)
+                win.NodeType = NodeType.Start;
             else
-                WindowList.NodeType = Dialogues.NodeType.Default;
+                win.NodeType = NodeType.Default;
 
             //Changes the name accordingly
-            if (WindowList.Type != Dialogues.WindowTypes.Choice)
+            if (win.Type != WindowTypes.Decision)
             {
-                switch (WindowList.NodeType)
+                switch (win.NodeType)
                 {
-                    case Dialogues.NodeType.Start:
+                    case NodeType.Start:
                         BoxName = "Start";
                         break;
-                    case Dialogues.NodeType.End:
+                    case NodeType.End:
                         BoxName = "End";
-                        if (WindowList.Type == Dialogues.WindowTypes.ChoiceAnswer)
+                        if (win.Type == WindowTypes.Option)
                             BoxName = "End (Option)";
                         break;
                     default: break;
                 }
             }
 
-            //Sets up the ID for the window
-            object[] Vals = { WindowList };
-            if (!Ids.ContainsKey(WindowList.ID))
-                Ids.Add(WindowList.ID, Vals);
+            if (!Ids.ContainsKey(win.ID))
+                Ids.Add(win.ID, win);
 
             //Creates the actual window
             string Style = "flow node 0";
-            if (WindowList.Type == Dialogues.WindowTypes.Choice) Style = "flow node 3";
-            if (WindowList.NodeType == Dialogues.NodeType.Start) Style = "flow node 1";
-            if (WindowList.Type == Dialogues.WindowTypes.ChoiceAnswer) Style = "flow node 2";
-            if (WindowList.NodeType == Dialogues.NodeType.End) Style = "flow node 6";
-            if (WindowList.Type == Dialogues.WindowTypes.Choice && WindowList.Connections.Count == 0) Style = "flow node 4";
+            if (win.NodeType == NodeType.Start) Style = "flow node 1";
+            if (win.NodeType == NodeType.End) Style = "flow node 1";
+            if (win.Type == WindowTypes.Decision) Style = "flow node 3";
+            if (win.Type == WindowTypes.Option) Style = "flow node 5";
+            if (win.Type == WindowTypes.Decision && win.Connections.Count == 0)
+                Style = "flow node 6";
 
             GUIStyle FinalStyle = new GUIStyle(Style);
             FinalStyle.fontSize = 14;
             FinalStyle.contentOffset = new Vector2(0, -30);
-            CheckPosition(WindowList);
-            WindowList.Size = GUI.Window(WindowList.ID, WindowList.Size, WindowFunction, BoxName, FinalStyle);
+            CheckPosition(win);
 
+			win.Size.width = WindowSize.x;
+			win.Size.height = WindowSize.y;
+            BoxName = win.Parent + " " + BoxName + " " + win.ID;
+			win.Size = GUI.Window(win.ID, win.Size, WindowFunction, BoxName, FinalStyle);
         }
-
     }
-
 
     void BuildMenus(GenericMenu Menu)
     {
@@ -627,27 +601,27 @@ public class DialogueSystem : EditorWindow {
 
         if (!CheckDialogueExists())
         {
-            object[] Vals = { AdjustedMousePosition, null, Dialogues.WindowTypes.Text };
+            object[] Vals = { AdjustedMousePosition, null, WindowTypes.Phrase };
             Menu.AddItem(new GUIContent("Create First Window"), false, AddWindowWrapper, Vals);
 
             return;
         }
 
-        for (int j = 0; j < CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows.Count; j++)
+        for (int j = 0; j < dialogue.CurrentTree.Windows.Count; j++)
         {
-            Dialogues.Window WindowList = CurrentDialogue.Set[CurrentDialogue.CurrentSet].Windows[j];
+            Dialogues.Window WindowList = dialogue.CurrentTree.Windows[j];
 
             //Accounts for the area when the user has scrolled
             Rect AdjustedArea = new Rect(WindowList.Size.position - ScrollPosition, WindowList.Size.size);
 
             if (Connecting)
             {
-                object[] CreateInfoDialogue = { AdjustedMousePosition, Dialogues.WindowTypes.Text };
-                object[] CreateInfoChoice = { AdjustedMousePosition, Dialogues.WindowTypes.Choice };
-                if (ConnectingCurrent.Type == Dialogues.WindowTypes.Text && ConnectingCurrent.Connections.Count == 0 || ConnectingCurrent.Type == Dialogues.WindowTypes.ChoiceAnswer && ConnectingCurrent.Connections.Count == 0 || ConnectingCurrent.Type == Dialogues.WindowTypes.Choice)
+                object[] CreateInfoDialogue = { AdjustedMousePosition, WindowTypes.Phrase };
+                object[] CreateInfoChoice = { AdjustedMousePosition, WindowTypes.Decision };
+                if (ConnectingCurrent.Type == WindowTypes.Phrase && ConnectingCurrent.Connections.Count == 0 || ConnectingCurrent.Type == WindowTypes.Option && ConnectingCurrent.Connections.Count == 0 || ConnectingCurrent.Type == WindowTypes.Decision)
                 {
-                    Menu.AddItem(new GUIContent("Create Dialogue Window"), false, EstablishNewWindowConnection, CreateInfoDialogue);
-                    Menu.AddItem(new GUIContent("Create Decision Window"), false, EstablishNewWindowConnection, CreateInfoChoice);
+                    Menu.AddItem(new GUIContent("Create Phrase"), false, EstablishNewWindowConnection, CreateInfoDialogue);
+                    Menu.AddItem(new GUIContent("Create Decision"), false, EstablishNewWindowConnection, CreateInfoChoice);
                 }
 
             }
@@ -655,14 +629,14 @@ public class DialogueSystem : EditorWindow {
             //Checks if the mouse is close enough to a line
             for (int i = 0; i < WindowList.Connections.Count; i++)
             {
-                float xPos = (WindowList.Size.center.x) + ((CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(WindowList.Connections[i]).Size.center.x - WindowList.Size.center.x) / 2);
-                float yPos = (WindowList.Size.center.y) + ((CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(WindowList.Connections[i]).Size.center.y - WindowList.Size.center.y) / 2);
+                float xPos = (WindowList.Size.center.x) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.x - WindowList.Size.center.x) / 2);
+                float yPos = (WindowList.Size.center.y) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.y - WindowList.Size.center.y) / 2);
                 Vector2 Middle = new Vector2(xPos, yPos);
                 float xPosLower = (WindowList.Size.center.x) + ((Middle.x - WindowList.Size.center.x) / 2);
                 float yPosLower = (WindowList.Size.center.y) + ((Middle.y - WindowList.Size.center.y) / 2);
                 Vector2 Lower = new Vector2(xPosLower, yPosLower);
-                float xPosHigher = (Middle.x) + ((CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(WindowList.Connections[i]).Size.center.x - Middle.x) / 2);
-                float yPosHigher = (Middle.y) + ((CurrentDialogue.Set[CurrentDialogue.CurrentSet].GetWindow(WindowList.Connections[i]).Size.center.y - Middle.y) / 2);
+                float xPosHigher = (Middle.x) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.x - Middle.x) / 2);
+                float yPosHigher = (Middle.y) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.y - Middle.y) / 2);
                 Vector2 Higher = new Vector2(xPosHigher, yPosHigher);
 
 
@@ -680,22 +654,22 @@ public class DialogueSystem : EditorWindow {
                 {
                     if (AdjustedArea.Contains(Event.current.mousePosition))
                     {
-                        if (ConnectingCurrent.Type == Dialogues.WindowTypes.Text && ConnectingCurrent.Connections.Count == 0 || ConnectingCurrent.Type == Dialogues.WindowTypes.ChoiceAnswer && ConnectingCurrent.Connections.Count == 0 || ConnectingCurrent.Type == Dialogues.WindowTypes.Choice)
+                        if (ConnectingCurrent.Type == WindowTypes.Phrase && ConnectingCurrent.Connections.Count == 0 || ConnectingCurrent.Type == WindowTypes.Option && ConnectingCurrent.Connections.Count == 0 || ConnectingCurrent.Type == WindowTypes.Decision)
                             Menu.AddItem(new GUIContent("Establish Connection"), false, CreateConnection, WindowList);
                     }
                 }
                 else
                 {
-                    if (WindowList.Type == Dialogues.WindowTypes.Text)
-                        Menu.AddItem(new GUIContent("Convert To Decision Window"), false, Convert, WindowList);
-                    else if (WindowList.Connections.Count <= 1 && WindowList.Type != Dialogues.WindowTypes.ChoiceAnswer)
-                        Menu.AddItem(new GUIContent("Convert To Dialogue Window"), false, Convert, WindowList);
-                    else if (WindowList.Type != Dialogues.WindowTypes.ChoiceAnswer)
-                        Menu.AddDisabledItem(new GUIContent("Convert To Dialogue Window"));
-                    if (WindowList.Type != Dialogues.WindowTypes.ChoiceAnswer)
+                    if (WindowList.Type == WindowTypes.Phrase)
+                        Menu.AddItem(new GUIContent("Convert To Decision"), false, Convert, WindowList);
+                    else if (WindowList.Connections.Count <= 1 && WindowList.Type != WindowTypes.Option)
+                        Menu.AddItem(new GUIContent("Convert To Phrase"), false, Convert, WindowList);
+                    else if (WindowList.Type != WindowTypes.Option)
+                        Menu.AddDisabledItem(new GUIContent("Convert To Phrase"));
+                    if (WindowList.Type != WindowTypes.Option)
                         Menu.AddSeparator("");
 
-                    if (WindowList.Type == Dialogues.WindowTypes.Text && WindowList.Connections.Count == 0 || WindowList.Type == Dialogues.WindowTypes.ChoiceAnswer && WindowList.Connections.Count == 0 || WindowList.Type == Dialogues.WindowTypes.Choice)
+                    if (WindowList.Type == WindowTypes.Phrase && WindowList.Connections.Count == 0 || WindowList.Type == WindowTypes.Option && WindowList.Connections.Count == 0 || WindowList.Type == WindowTypes.Decision)
                         Menu.AddItem(new GUIContent("Create Connection"), false, StartConnection, WindowList);
                     Menu.AddItem(new GUIContent("Remove Window"), false, RemoveWindow, WindowList);
                     Menu.AddItem(new GUIContent("Remove Window Tree"), false, RemoveWindowTree, WindowList);
@@ -708,7 +682,7 @@ public class DialogueSystem : EditorWindow {
         if(Connecting)
             Menu.AddItem(new GUIContent("Cancel"), false, CancelConnection);
 
-		EditorUtility.SetDirty(CurrentDialogue);
+		EditorUtility.SetDirty(dialogue);
 
 	}
 
@@ -716,29 +690,20 @@ public class DialogueSystem : EditorWindow {
     {
         CheckDialogue();
 
-        if (!CurrentDialogue)
+        if (!dialogue)
         {
             GUILayout.Label("This object has no Dialogues component");
-            //Add option to create
             return;
-        }
-
-        if (CurrentDialogue.Set.Count == 0)
-        {
-            CurrentDialogue.Set.Add(new Dialogues.WindowSet());
-            CurrentDialogue.CurrentSet = 0;
-            FirstSet = true;
         }
 
         CheckConnections();
 
-        //If texture wasn't setup, set it up
         if (BackgroundTexture == null)
         {
             MakeTextures();
         }
 
-        if (CurrentDialogue.TabList.Count == 0)
+        if (dialogue.TreeCount == 0)
         {
             GUIStyle Style = GUI.skin.GetStyle("Label");
             Style.alignment = TextAnchor.MiddleCenter;
@@ -747,8 +712,6 @@ public class DialogueSystem : EditorWindow {
         }
         else
         {
-            CurrentDialogue.CurrentSet = CurrentTab;
-
             //Creates large scroll view for the work area
             ScrollPosition = GUI.BeginScrollView(new Rect(0, 0, position.width, position.height), 
 				ScrollPosition, new Rect(Vector2.zero, WorkSize), GUIStyle.none, GUIStyle.none);
@@ -789,18 +752,16 @@ public class DialogueSystem : EditorWindow {
 
             BuildWindows();
 
-            if (CurrentDialogue.Set[CurrentDialogue.CurrentSet].NewWindowOpen)
+            if (isNewWindowShow)
             {
-                //if (NewTree == null) NewTree = new Rect(50, 50, 400, 150);
                 NewTree = GUI.Window(99999, NewTree, AddNewWindow, "Add New Dialogue Tree");
-
             }
 
             EndWindows();
 
             GUI.EndScrollView();
             GUILayout.BeginArea(new Rect(0, 20, Screen.width, 20));
-            CurrentTab = GUILayout.Toolbar(CurrentTab, CurrentDialogue.TabList.ToArray());
+            dialogue.CurrentTreeIndex = GUILayout.Toolbar(dialogue.CurrentTreeIndex, dialogue.TabsNames);
             GUILayout.EndArea();
 
             if (new Rect(0, 0, position.width, position.height).Contains(Event.current.mousePosition))
@@ -843,36 +804,28 @@ public class DialogueSystem : EditorWindow {
         //Extra layouts
         GUILayout.BeginArea(new Rect(0, 0, Screen.width, 50));
         GUILayout.BeginHorizontal("GUIEditor.BreadcrumbLeft");
-        if(GUILayout.Button("New Dialogue Tree",new GUIStyle("TE toolbarbutton"),GUILayout.Width(150), GUILayout.Height(18)))
+        if (GUILayout.Button("New Dialogue Tree", new GUIStyle("TE toolbarbutton"), GUILayout.Width(150), GUILayout.Height(18)))
         {
-            CurrentDialogue.Set[CurrentDialogue.CurrentSet].NewWindowOpen = true;
-            NewTree = new Rect(50+ScrollPosition.x, 50+ScrollPosition.y, 400, 150);
+            NewTree = new Rect(50 + ScrollPosition.x, 50 + ScrollPosition.y, 400, 150);
             NewTreeName = "";
             NewTreeInfo = "";
+            isNewWindowShow = true;
         }
-        
-        if(GUILayout.Button("Remove Tree", new GUIStyle("TE toolbarbutton"), GUILayout.Width(100), GUILayout.Height(18)))
+
+        if (GUILayout.Button("Remove Tree", new GUIStyle("TE toolbarbutton"), GUILayout.Width(100), GUILayout.Height(18)))
         {
-            CurrentDialogue.Set.RemoveAt(CurrentTab);
-            CurrentDialogue.TabList.RemoveAt(CurrentTab);
-            CurrentDialogue.CurrentSet = 0;
-            CurrentTab = 0;
+            if (dialogue.TreeCount > 0)
+                dialogue.RemoveCurrentTree();
         }
 
         GUILayout.EndHorizontal();
         GUILayout.EndArea();
 
-        if(CurrentDialogue.Set.Count > 0 && CurrentDialogue.TabList.Count == 0)
+
+        if (isNewWindowShow && dialogue.TreeCount == 0)
         {
             BeginWindows();
-
-            if (CurrentDialogue.Set[CurrentDialogue.CurrentSet].NewWindowOpen)
-            {
-                if (NewTree == null) NewTree = new Rect(50, 50, 400, 150);
-                NewTree = GUI.Window(99999, NewTree, AddNewWindow, "Add New Dialogue Tree");
-
-            }
-
+            NewTree = GUI.Window(99999, NewTree, AddNewWindow, "Add New Dialogue Tree");
             EndWindows();
         }
 
@@ -899,33 +852,74 @@ public class DialogueSystem : EditorWindow {
     void WindowFunction(int windowID)
     {
         if (!Ids.ContainsKey(windowID)) return;
-        Dialogues.Window Win = (Dialogues.Window)Ids[windowID][0];
+		 Dialogues.Window Win = Ids[windowID];
 
         int xSize = 150;
         int ySize = 84;
 
-        if(Win.Type != Dialogues.WindowTypes.Choice)
+        if(Win.Type != WindowTypes.Decision)
         {
             if(GUI.Button(new Rect(0, 0, 15, 15), "-")) AddWindowBefore(Win);
             if(GUI.Button(new Rect(135, 0, 15, 15), "+")) AddWindowAfter(Win) ;
         }
 
-        /*Win.Trigger = GUI.Toggle(new Rect(10, 100, 60, 30), Win.Trigger, "Trigger");
-        if (Win.Trigger)
-        {
-            Win.TriggerText = GUI.TextField(new Rect(70, 100, 70, 20), Win.TriggerText);
-        }
-        else
-            Win.TriggerText = "";*/
-
         Win.Text = GUI.TextArea(new Rect(0, 15, xSize, ySize), Win.Text);
 
-		GUI.Label(new Rect(0, 100, 70, 20), "Speaker: ");
+		GUI.Label(new Rect(0, 100, 60, 20), "Speaker: ");
 		Win.speaker = (Speaker)EditorGUI.EnumPopup(
-			new Rect(70, 103, 70, 20),
+			new Rect(60, 102, 85, 20),
 			Win.speaker);
 
+        if (Win.NodeType == NodeType.Start)
+        {
+            if (GUI.Button(new Rect(10, 125, 130, 20), "Tree conditions: " + dialogue.CurrentTree.Importance))
+                TreeShowCondition();
+        }
+        else if (Win.Type == WindowTypes.Option)
+		{
+			if (GUI.Button(new Rect(10, 125, 130, 20), "Show conditions: " + Win.showCondition.states.Count))
+				ShowQuests(windowID, true);
+		}
+        else
+        {
+            if (GUI.Button(new Rect(35, 125, 80, 20), "Quests: " + Win.activateQuests.Count))
+                ShowQuests(windowID, false);
+        }
+
 		GUI.DragWindow();
+    }
+
+	private void ShowQuests(int windowID, bool isConditions)
+	{
+		int windowIndex = dialogue.CurrentTree.GetWindowIndex(windowID);
+
+		SerializedObject obj = new SerializedObject(dialogue);
+		var treeList = obj.FindProperty("treeList");
+		var curTree = treeList.GetArrayElementAtIndex(dialogue.CurrentTreeIndex);
+		var curWindow = curTree.FindPropertyRelative("Windows").GetArrayElementAtIndex(windowIndex);
+
+		var questProp = curWindow.FindPropertyRelative("activateQuests");
+		if (isConditions)
+			questProp = curWindow.FindPropertyRelative("showCondition");
+
+		string label = "Dialogue: " + dialogue.name;
+		label += "\nTab: " + dialogue.CurrentTree.Name;
+		label += "\nWindow text: " + dialogue.CurrentTree.GetWindow(windowID).Text;
+
+		QuestWindow.ShowQuestWindow(obj, questProp, label, SaveChanges, isConditions);
+	}
+
+    private void TreeShowCondition()
+    {
+        SerializedObject obj = new SerializedObject(dialogue);
+        var treeList = obj.FindProperty("treeList");
+        var curTree = treeList.GetArrayElementAtIndex(dialogue.CurrentTreeIndex);
+        var questProp = curTree.FindPropertyRelative("showCondition");
+
+        string label = "Dialogue: " + dialogue.name;
+        label += "\nTab: " + dialogue.CurrentTree.Name;
+
+        QuestWindow.ShowQuestWindow(obj, questProp, label, SaveChanges, true);
     }
 
     void AddNewWindow(int winID)
@@ -939,28 +933,17 @@ public class DialogueSystem : EditorWindow {
                 NewTreeInfo = "Must Enter a Name";
             else
             {
-                CurrentDialogue.TabList.Add(NewTreeName);
-                CurrentDialogue.Set[CurrentDialogue.CurrentSet].NewWindowOpen = false;
-                if (FirstSet)
-                {
-                    FirstSet = false;
-                }
-                else
-                {
-                    CurrentDialogue.Set.Add(new Dialogues.WindowSet());
-                }
-                CurrentTab = CurrentDialogue.Set.Count-1;
-                
+                isNewWindowShow = false;
+                dialogue.CreateTree(NewTreeName);
             }
         }
-        if(GUI.Button(new Rect(370,0,30,30), "X"))
+
+        if (GUI.Button(new Rect(370, 0, 30, 30), "X"))
         {
-            CurrentDialogue.Set[CurrentDialogue.CurrentSet].NewWindowOpen = false;
+            isNewWindowShow = false;
         }
 
         GUI.DragWindow();
-		EditorUtility.SetDirty(CurrentDialogue);
-
+		EditorUtility.SetDirty(dialogue);
 	}
-
 }

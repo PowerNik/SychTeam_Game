@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class ServiceLocator
 {
-	private static Dictionary<Type, object> serviceDict = new Dictionary<Type, object>();
+	/*private static Dictionary<Type, object> serviceDict = new Dictionary<Type, object>();
 
 	public static void Register<T>(T monobeh)
 	{
@@ -15,5 +15,15 @@ public static class ServiceLocator
 	public static T GetService<T>()
 	{
 		return (T)serviceDict[typeof(T)];
+	}*/
+
+	public static DialogueInteraction DialogueSystem
+	{
+		get; set;
+	}
+
+	public static QuestSystem QuestSystem
+	{
+		get; set;
 	}
 }

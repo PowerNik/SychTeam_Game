@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
 
-[CreateAssetMenu(fileName = "HeadKeeper", menuName = "HeadKeeper")]
+//[CreateAssetMenu(fileName = "HeadKeeper", menuName = "HeadKeeper")]
 public class HeadKeeper : ScriptableObject 
 {
 	public List<SpeakerHead> heads = new List<SpeakerHead>();

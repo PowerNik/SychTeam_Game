@@ -1,0 +1,317 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b10fe5d6867c1b5449b4bf163fcd72ec, type: 3}
+  m_Name: TestDialogue
+  m_EditorClassIdentifier: 
+  treeList:
+  - Name: 0 1
+    CurrentId: 6
+    FirstWindowID: 0
+    Windows:
+    - ID: 0
+      Size:
+        serializedVersion: 2
+        x: 168
+        y: 100
+        width: 150
+        height: 150
+      Text: 0 1
+      Type: 1
+      NodeType: 0
+      Parent: -1
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 03000000
+    - ID: 3
+      Size:
+        serializedVersion: 2
+        x: 351
+        y: 85
+        width: 150
+        height: 150
+      Text: 1
+      Type: 2
+      NodeType: 1
+      Parent: 0
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 05000000
+    - ID: 5
+      Size:
+        serializedVersion: 2
+        x: 450
+        y: 261
+        width: 150
+        height: 150
+      Text: 2
+      Type: 0
+      NodeType: 2
+      Parent: 3
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 
+    showCondition:
+      states: []
+      logics: 
+  - Name: 0 2
+    CurrentId: 1
+    FirstWindowID: 0
+    Windows:
+    - ID: 0
+      Size:
+        serializedVersion: 2
+        x: 126
+        y: 121
+        width: 150
+        height: 150
+      Text: 0 2
+      Type: 0
+      NodeType: 0
+      Parent: -1
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 
+    showCondition:
+      states: []
+      logics: 
+  - Name: 0 3
+    CurrentId: 1
+    FirstWindowID: 0
+    Windows:
+    - ID: 0
+      Size:
+        serializedVersion: 2
+        x: 214
+        y: 98
+        width: 150
+        height: 150
+      Text: 0 3
+      Type: 0
+      NodeType: 0
+      Parent: -1
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 
+    showCondition:
+      states: []
+      logics: 
+  - Name: 1 1
+    CurrentId: 2
+    FirstWindowID: 0
+    Windows:
+    - ID: 0
+      Size:
+        serializedVersion: 2
+        x: 136
+        y: 169
+        width: 150
+        height: 150
+      Text: 1 1
+      Type: 0
+      NodeType: 0
+      Parent: -1
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 01000000
+    - ID: 1
+      Size:
+        serializedVersion: 2
+        x: 373
+        y: 169
+        width: 150
+        height: 150
+      Text: failed
+      Type: 0
+      NodeType: 2
+      Parent: 0
+      speaker: 0
+      activateQuests:
+      - questType: 0
+        questProgress: 3
+      showCondition:
+        states: []
+        logics: 
+      Connections: 
+    showCondition:
+      states:
+      - questType: 0
+        questProgress: 2
+      logics: 
+  - Name: 1 2
+    CurrentId: 1
+    FirstWindowID: 0
+    Windows:
+    - ID: 0
+      Size:
+        serializedVersion: 2
+        x: 216
+        y: 122
+        width: 150
+        height: 150
+      Text: 
+      Type: 0
+      NodeType: 0
+      Parent: -1
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 
+    showCondition:
+      states:
+      - questType: 0
+        questProgress: 1
+      logics: 
+  - Name: 2 1
+    CurrentId: 1
+    FirstWindowID: 0
+    Windows:
+    - ID: 0
+      Size:
+        serializedVersion: 2
+        x: 224
+        y: 127
+        width: 150
+        height: 150
+      Text: 2 1
+      Type: 0
+      NodeType: 0
+      Parent: -1
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 
+    showCondition:
+      states:
+      - questType: 0
+        questProgress: 0
+      - questType: 0
+        questProgress: 0
+      logics: 00000000
+  - Name: 3 1
+    CurrentId: 2
+    FirstWindowID: 0
+    Windows:
+    - ID: 0
+      Size:
+        serializedVersion: 2
+        x: 76
+        y: 164
+        width: 150
+        height: 150
+      Text: 3 1
+      Type: 0
+      NodeType: 0
+      Parent: -1
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 01000000
+    - ID: 1
+      Size:
+        serializedVersion: 2
+        x: 390
+        y: 164
+        width: 150
+        height: 150
+      Text: started
+      Type: 0
+      NodeType: 2
+      Parent: 0
+      speaker: 0
+      activateQuests:
+      - questType: 0
+        questProgress: 1
+      showCondition:
+        states: []
+        logics: 
+      Connections: 
+    showCondition:
+      states:
+      - questType: 0
+        questProgress: 0
+      - questType: 0
+        questProgress: 0
+      - questType: 0
+        questProgress: 0
+      logics: 0000000000000000
+  - Name: 3 2
+    CurrentId: 2
+    FirstWindowID: 0
+    Windows:
+    - ID: 0
+      Size:
+        serializedVersion: 2
+        x: 189
+        y: 158
+        width: 150
+        height: 150
+      Text: 3 2
+      Type: 0
+      NodeType: 0
+      Parent: -1
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 01000000
+    - ID: 1
+      Size:
+        serializedVersion: 2
+        x: 418
+        y: 161
+        width: 150
+        height: 150
+      Text: ended
+      Type: 0
+      NodeType: 2
+      Parent: 0
+      speaker: 0
+      activateQuests:
+      - questType: 0
+        questProgress: 2
+      showCondition:
+        states: []
+        logics: 
+      Connections: 
+    showCondition:
+      states:
+      - questType: 0
+        questProgress: 1
+      - questType: 0
+        questProgress: 1
+      - questType: 0
+        questProgress: 1
+      logics: 0000000000000000
