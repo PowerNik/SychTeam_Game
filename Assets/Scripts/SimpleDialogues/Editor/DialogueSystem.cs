@@ -865,6 +865,14 @@ public class DialogueSystem : EditorWindow {
         int xSize = 150;
         int ySize = 84;
 
+        if(Win.NodeType == Dialogues.NodeType.Start)
+        {
+            if (GUI.Button(new Rect(0, -20, 70, 20), "Tree conditions: " + dialogue.CurrentTree.Importance))
+            {
+                TreeShowCondition();
+            }
+        }
+
         if(Win.Type != Dialogues.WindowTypes.Choice)
         {
             if(GUI.Button(new Rect(0, 0, 15, 15), "-")) AddWindowBefore(Win);
@@ -878,23 +886,20 @@ public class DialogueSystem : EditorWindow {
 			new Rect(60, 102, 85, 20),
 			Win.speaker);
 
-		if (GUI.Button(new Rect(5, 125, 60, 20), "Quests"))
-		{
-			ShowQuests(windowID, false);
-		}
-
 		if (Win.Type == Dialogues.WindowTypes.ChoiceAnswer)
 		{
-			if (GUI.Button(new Rect(75, 125, 70, 20), "Condition"))
+			if (GUI.Button(new Rect(10, 125, 130, 20), "Show conditions: " + Win.showCondition.states.Count))
 			{
-				if (dialogue.CurrentTree.GetWindow(windowID).showCondition == null)
-				{
-					dialogue.CurrentTree.GetWindow(windowID).showCondition = new QuestCondition();
-				}
-
 				ShowQuests(windowID, true);
 			}
 		}
+        else
+        {
+            if (GUI.Button(new Rect(35, 125, 80, 20), "Quests: " + Win.activateQuests.Count))
+            {
+                ShowQuests(windowID, false);
+            }
+        }
 
 		GUI.DragWindow();
     }
@@ -904,9 +909,9 @@ public class DialogueSystem : EditorWindow {
 		int windowIndex = dialogue.CurrentTree.GetWindowIndex(windowID);
 
 		SerializedObject obj = new SerializedObject(dialogue);
-		var set = obj.FindProperty("treeList");
-		var curSet = set.GetArrayElementAtIndex(dialogue.CurrentTreeIndex);
-		var curWindow = curSet.FindPropertyRelative("Windows").GetArrayElementAtIndex(windowIndex);
+		var treeList = obj.FindProperty("treeList");
+		var curTree = treeList.GetArrayElementAtIndex(dialogue.CurrentTreeIndex);
+		var curWindow = curTree.FindPropertyRelative("Windows").GetArrayElementAtIndex(windowIndex);
 
 		var questProp = curWindow.FindPropertyRelative("activateQuests");
 		if (isConditions)
@@ -919,7 +924,20 @@ public class DialogueSystem : EditorWindow {
 		QuestWindow.ShowQuestWindow(obj, questProp, label, SaveChanges, isConditions);
 	}
 
-	void AddNewWindow(int winID)
+    private void TreeShowCondition()
+    {
+        SerializedObject obj = new SerializedObject(dialogue);
+        var treeList = obj.FindProperty("treeList");
+        var curTree = treeList.GetArrayElementAtIndex(dialogue.CurrentTreeIndex);
+        var questProp = curTree.FindPropertyRelative("showCondition");
+
+        string label = "Dialogue: " + dialogue.name;
+        label += "\nTab: " + dialogue.CurrentTree.Name;
+
+        QuestWindow.ShowQuestWindow(obj, questProp, label, SaveChanges, true);
+    }
+
+    void AddNewWindow(int winID)
     {
         NewTreeName = GUI.TextField(new Rect(100, 50, 200, 20), NewTreeName);
         GUI.Label(new Rect(100, 25, 200, 20), NewTreeInfo);

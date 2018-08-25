@@ -13,37 +13,43 @@ public class QuestCondition
 	private List<int> orConditionList = new List<int>();
 	private List<List<int>> andConditionList = new List<List<int>>();
 
-	public bool GetConditionValue()
+	public bool IsTrue
 	{
-		if(states.Count == 0)
-		{
-			return true;
-		}
-
-		if(states.Count == 1)
-		{
-			return ServiceLocator.QuestSystem.CheckQuestState(states[0]);
-		}
-
-		orConditionList.Clear();
-		andConditionList.Clear();
-		andConditionList.Add(new List<int>());
-
-		ProcessFirstValue();
-		ProcessMiddleValues();
-		ProcessLastValue();
-
-		if(CheckOrConditions())
-		{
-			return true;
-		}
-		else
-		{
-			return CheckAndConditions();
-		}
+        get { return GetConditionValue(); }
 	}
 
-	private void ProcessFirstValue()
+    private bool GetConditionValue()
+    {
+        if (states.Count == 0)
+        {
+            return true;
+        }
+
+        if (states.Count == 1)
+        {
+            return ServiceLocator.QuestSystem.CheckQuestState(states[0]);
+        }
+
+        orConditionList.Clear();
+        andConditionList.Clear();
+        andConditionList.Add(new List<int>());
+
+        ProcessFirstValue();
+        ProcessMiddleValues();
+        ProcessLastValue();
+
+        if (CheckOrConditions())
+        {
+            return true;
+        }
+        else
+        {
+            return CheckAndConditions();
+        }
+    }
+
+
+    private void ProcessFirstValue()
 	{
 		if (logics.Count == 0)
 		{

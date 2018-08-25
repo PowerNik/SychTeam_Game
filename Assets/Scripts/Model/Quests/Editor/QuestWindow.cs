@@ -29,7 +29,7 @@ public class QuestWindow : EditorWindow
 
 		QuestWindow window;
 		if (isQuestConditions)
-			window = GetWindow<QuestWindow>("Quest Conditions");
+			window = GetWindow<QuestWindow>("Show Conditions");
 		else
 			window = GetWindow<QuestWindow>("Quest States");
 

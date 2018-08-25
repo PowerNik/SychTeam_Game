@@ -10,7 +10,9 @@ public class Dialogues : ScriptableObject
 	public enum NodeType { Start, Default, End }
 
 	private Window currentWindow;
-	private List<WindowTree> treeList = new List<WindowTree>();
+    [HideInInspector]
+    [SerializeField]
+    private List<WindowTree> treeList = new List<WindowTree>();
 
     public int TreeCount
     {
@@ -31,7 +33,16 @@ public class Dialogues : ScriptableObject
 	public class WindowTree
 	{
         public string Name;
-        public int Importance = 0;
+        public int Importance
+        {
+            get
+            {
+                if (showCondition.IsTrue)
+                    return showCondition.states.Count;
+                else
+                    return -showCondition.states.Count;
+            }
+        }
 
 		public int CurrentId;
 		public int FirstWindow = -562;
@@ -172,7 +183,7 @@ public class Dialogues : ScriptableObject
 				options.Add(CurrentTree.GetWindow(currentWindow.Connections[i]));
 			}
 
-			var optionsForShow = options.Where(w => w.showCondition.GetConditionValue());
+			var optionsForShow = options.Where(w => w.showCondition.IsTrue);
 			var choises = optionsForShow.OrderBy(w => w.Size.y)
 				.Select(w => w.Text)
 				.ToArray();
