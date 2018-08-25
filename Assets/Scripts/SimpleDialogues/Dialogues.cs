@@ -6,10 +6,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Dialogue", menuName = "Dialogue &D")]
 public class Dialogues : ScriptableObject
 {
-	public enum WindowTypes { Phrase, Decision, Option }
-	public enum NodeType { Start, Default, End }
+    public enum WindowTypes { Phrase, Decision, Option }
+    public enum NodeType { Start, Default, End }
 
-	private Window currentWindow;
+    private Window currentWindow;
     [HideInInspector]
     [SerializeField]
     private List<WindowTree> treeList = new List<WindowTree>();
@@ -19,7 +19,7 @@ public class Dialogues : ScriptableObject
         get { return treeList.Count; }
     }
 
-	public int CurrentTreeIndex
+    public int CurrentTreeIndex
     {
         get; set;
     }
@@ -30,8 +30,8 @@ public class Dialogues : ScriptableObject
     }
 
     [System.Serializable]
-	public class WindowTree
-	{
+    public class WindowTree
+    {
         public string Name;
         public int Importance
         {
@@ -44,61 +44,61 @@ public class Dialogues : ScriptableObject
             }
         }
 
-		public int CurrentId;
-		public int FirstWindow = -562;
-		public List<Window> Windows = new List<Window>();
+        public int CurrentId;
+        public int FirstWindow = -562;
+        public List<Window> Windows = new List<Window>();
         public QuestCondition showCondition = new QuestCondition();
 
         public WindowTree(string name)
-		{
+        {
             Name = name;
-			CurrentId = 0;
-		}
-
-		public Window GetWindow(int ID)
-		{
-			return Windows.FirstOrDefault(w => w.ID == ID);
-		}
-
-		public int GetWindowIndex(int ID)
-        { 
-			return Windows.FindIndex(w => w.ID == ID);
+            CurrentId = 0;
         }
-	}
 
-	[System.Serializable]
-	public class Window
-	{
-		public int ID;
+        public Window GetWindow(int ID)
+        {
+            return Windows.FirstOrDefault(w => w.ID == ID);
+        }
 
-		public Rect Size;
-		public string Text;
-		public WindowTypes Type;
-		public NodeType NodeType;
-		public int Parent;
-		public Speaker speaker;
+        public int GetWindowIndex(int ID)
+        {
+            return Windows.FindIndex(w => w.ID == ID);
+        }
+    }
 
-		public List<QuestState> activateQuests = new List<QuestState>();
-		public QuestCondition showCondition = new QuestCondition();
+    [System.Serializable]
+    public class Window
+    {
+        public int ID;
 
-		public List<int> Connections = new List<int>();
+        public Rect Size;
+        public string Text;
+        public WindowTypes Type;
+        public NodeType NodeType;
+        public int Parent;
+        public Speaker speaker;
 
-		public Window(int id, int parent, Rect newSize, 
-			WindowTypes type = WindowTypes.Phrase, NodeType nodeType = NodeType.Default)
-		{
-			ID = id;
-			Parent = parent;
-			Size = newSize;
-			Text = "";
-			Type = type;
-			NodeType = nodeType;
-		}
+        public List<QuestState> activateQuests = new List<QuestState>();
+        public QuestCondition showCondition = new QuestCondition();
 
-		public bool IsChoice()
-		{
-			return Type == WindowTypes.Decision;
-		}
-	}
+        public List<int> Connections = new List<int>();
+
+        public Window(int id, int parent, Rect newSize,
+            WindowTypes type = WindowTypes.Phrase, NodeType nodeType = NodeType.Default)
+        {
+            ID = id;
+            Parent = parent;
+            Size = newSize;
+            Text = "";
+            Type = type;
+            NodeType = nodeType;
+        }
+
+        public bool IsChoice()
+        {
+            return Type == WindowTypes.Decision;
+        }
+    }
 
     private void Reset()
     {
@@ -114,15 +114,31 @@ public class Dialogues : ScriptableObject
         }
     }
 
-    public void SetFirstTree(int treeIndex)
+    public void SetTree(int treeIndex, out int nextTreeIndex)
     {
-        CurrentTreeIndex = treeIndex;
-        Reset();
-    }
+        var sortedList = treeList.Where(t => t.Importance >= 0)
+            .OrderBy(t => t.Importance)
+            .GroupBy(t => t.Importance);
 
-    public int GetNextTreeIndex(int treeIndex)
-    {
-        return (treeIndex + 1) % treeList.Count;
+        // if avaible zero-important trees only 
+        if (sortedList.Count() == 1 && sortedList.First().Key == 0)
+        {
+            CurrentTreeIndex = treeIndex;
+            nextTreeIndex = (treeIndex + 1) % sortedList.First().Count();
+        }
+        else
+        {
+            // first of most important trees
+            var chosenTree = sortedList.Last().First();
+            CurrentTreeIndex = treeList.IndexOf(chosenTree);
+
+            /*foreach(var group in sortedList)
+            {
+                Debug.Log(group.Key + ": " + string.Join(", ", group.Select(w => w.Name).ToArray()));
+            }*/
+            nextTreeIndex = treeIndex;
+        }
+        Reset();
     }
 
     public void CreateTree(string name)
@@ -137,90 +153,90 @@ public class Dialogues : ScriptableObject
         CurrentTreeIndex = 0;
     }
 
-	public bool End()
-	{
-		return currentWindow.Connections.Count == 0;
-	}
+    public bool End()
+    {
+        return currentWindow.Connections.Count == 0;
+    }
 
-	public Speaker CurrentSpeaker()
-	{
-		return currentWindow.speaker;
-	}
+    public Speaker CurrentSpeaker()
+    {
+        return currentWindow.speaker;
+    }
 
-	/// <summary>
-	/// Moves to the next item in the list.
-	/// </summary>
-	/// <returns># = Amount of choices it has | 0 = success | -1 = end</returns>
-	public int Next()
-	{
-		ServiceLocator.QuestSystem.SetQuestProgress(currentWindow.activateQuests);
+    /// <summary>
+    /// Moves to the next item in the list.
+    /// </summary>
+    /// <returns># = Amount of choices it has | 0 = success | -1 = end</returns>
+    public int Next()
+    {
+        ServiceLocator.QuestSystem.SetQuestProgress(currentWindow.activateQuests);
 
-		if (currentWindow.Type == WindowTypes.Decision)
-			return currentWindow.Connections.Count;
-		else 
-			if (currentWindow.Connections.Count == 0)
-				return -1;
-			else
-			{
-				currentWindow = CurrentTree.GetWindow(currentWindow.Connections[0]);
-				return 0;
-			}
-	}
+        if (currentWindow.Type == WindowTypes.Decision)
+            return currentWindow.Connections.Count;
+        else
+            if (currentWindow.Connections.Count == 0)
+            return -1;
+        else
+        {
+            currentWindow = CurrentTree.GetWindow(currentWindow.Connections[0]);
+            return 0;
+        }
+    }
 
-	/// <summary>
-	/// Returns the choices the current node has. 
-	/// </summary>
-	/// <returns>null if the node isn't a decision node. An array of strings otherwise</returns>
-	public string[] GetChoices()
-	{
-		if (currentWindow.Type != WindowTypes.Decision)
-			return new string[] { };
-		else
-		{
-			List<Window> options = new List<Window>();
-			for (int i = 0; i < currentWindow.Connections.Count; i++)
-			{
-				options.Add(CurrentTree.GetWindow(currentWindow.Connections[i]));
-			}
+    /// <summary>
+    /// Returns the choices the current node has. 
+    /// </summary>
+    /// <returns>null if the node isn't a decision node. An array of strings otherwise</returns>
+    public string[] GetChoices()
+    {
+        if (currentWindow.Type != WindowTypes.Decision)
+            return new string[] { };
+        else
+        {
+            List<Window> options = new List<Window>();
+            for (int i = 0; i < currentWindow.Connections.Count; i++)
+            {
+                options.Add(CurrentTree.GetWindow(currentWindow.Connections[i]));
+            }
 
-			var optionsForShow = options.Where(w => w.showCondition.IsTrue);
-			var choises = optionsForShow.OrderBy(w => w.Size.y)
-				.Select(w => w.Text)
-				.ToArray();
+            var optionsForShow = options.Where(w => w.showCondition.IsTrue);
+            var choises = optionsForShow.OrderBy(w => w.Size.y)
+                .Select(w => w.Text)
+                .ToArray();
 
-			return choises;
-		}
-	}
+            return choises;
+        }
+    }
 
-	/// <summary>
-	/// Moves to the next selected choice
-	/// </summary>
-	/// <param name="choice"></param>
-	/// <returns></returns>
-	public bool NextChoice(string choice)
-	{
-		if (currentWindow.Type != WindowTypes.Decision)
-			return false;
-		else
-		{
-			for (int i = 0; i < currentWindow.Connections.Count; i++)
-			{
-				if (CurrentTree.GetWindow(currentWindow.Connections[i]).Text == choice)
-				{
-					ServiceLocator.QuestSystem.SetQuestProgress(currentWindow.activateQuests);
+    /// <summary>
+    /// Moves to the next selected choice
+    /// </summary>
+    /// <param name="choice"></param>
+    /// <returns></returns>
+    public bool NextChoice(string choice)
+    {
+        if (currentWindow.Type != WindowTypes.Decision)
+            return false;
+        else
+        {
+            for (int i = 0; i < currentWindow.Connections.Count; i++)
+            {
+                if (CurrentTree.GetWindow(currentWindow.Connections[i]).Text == choice)
+                {
+                    ServiceLocator.QuestSystem.SetQuestProgress(currentWindow.activateQuests);
 
-					currentWindow = CurrentTree.GetWindow(CurrentTree.GetWindow(currentWindow.Connections[i]).Connections[0]);
-					return true;
-				}
-			}
-			return false;
-		}
-	}
+                    currentWindow = CurrentTree.GetWindow(CurrentTree.GetWindow(currentWindow.Connections[i]).Connections[0]);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 
-	public string GetCurrentDialogue()
-	{
-		if (currentWindow == null)
-			Reset();
-		return currentWindow.Text;
-	}
+    public string GetCurrentPhrase()
+    {
+        if (currentWindow == null)
+            Reset();
+        return currentWindow.Text;
+    }
 }

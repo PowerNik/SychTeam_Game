@@ -186,6 +186,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialog: {fileID: 0}
+  isCyclicalRepeating: 0
 --- !u!114 &18103643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -291,28 +292,7 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114440021456324060, guid: ea632940b4242d74b9c779e7f2455ee1,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 61127318405829368, guid: ea632940b4242d74b9c779e7f2455ee1,
-        type: 2}
-      propertyPath: m_Size.y
-      value: 1.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 61127318405829368, guid: ea632940b4242d74b9c779e7f2455ee1,
-        type: 2}
-      propertyPath: m_Size.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 61127318405829368, guid: ea632940b4242d74b9c779e7f2455ee1,
-        type: 2}
-      propertyPath: m_Offset.y
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114440021456324060, guid: ea632940b4242d74b9c779e7f2455ee1, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ea632940b4242d74b9c779e7f2455ee1, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &227591623
@@ -357,23 +337,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c9aad4fee0f3e9b439411baecf1a0a1c, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &278052381 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1318879964963038, guid: ea632940b4242d74b9c779e7f2455ee1,
-    type: 2}
-  m_PrefabInternal: {fileID: 157899628}
---- !u!114 &278052383
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 278052381}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75115591935bf0f47b85b1f909224c5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dialog: {fileID: 11400000, guid: ac5dbee901eb1fa4ba93dd11ccd93951, type: 2}
 --- !u!4 &278052387 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4289378329620824, guid: ea632940b4242d74b9c779e7f2455ee1,
@@ -1273,6 +1236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialog: {fileID: 0}
+  isCyclicalRepeating: 0
 --- !u!114 &1886411400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1674,6 +1638,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialog: {fileID: 0}
+  isCyclicalRepeating: 0
 --- !u!114 &2107332736
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 212829272490611990}
   - component: {fileID: 61127318405829368}
   - component: {fileID: 114018765776822748}
-  - component: {fileID: 114440021456324060}
+  - component: {fileID: 114326760403671730}
   m_Layer: 0
   m_Name: teacher
   m_TagString: Untagged
@@ -36,8 +36,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1318879964963038}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.526, y: 1.716, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.03, y: 1.53, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children: []
   m_Father: {fileID: 0}
@@ -66,7 +66,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.48, y: 1.36}
+  m_Size: {x: 0.5, y: 1.4}
   m_EdgeRadius: 0
 --- !u!114 &114018765776822748
 MonoBehaviour:
@@ -79,7 +79,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2613b94c8015c7e4993fb3cc2c26df59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114440021456324060
+--- !u!114 &114326760403671730
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -90,7 +90,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75115591935bf0f47b85b1f909224c5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialog: {fileID: 0}
+  dialog: {fileID: 11400000, guid: 9ce9199dc7ee9f3459cba7dce3269096, type: 2}
+  isCyclicalRepeating: 1
 --- !u!212 &212829272490611990
 SpriteRenderer:
   m_ObjectHideFlags: 1

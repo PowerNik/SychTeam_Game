@@ -31,21 +31,16 @@ public class DialogueInteraction : MonoBehaviour
 		rootPanel.SetActive(false);
 	}
 
-	public void SetDialogue(Dialogues dialogue, int index)
+	public void SetDialogue(Dialogues dialogue, int index, out int nextIndex)
 	{
 		InputManager.Instance.ChangeInput(InputType.Dialogue);
 
 		this.dialogue = dialogue;
-		this.dialogue.SetFirstTree(index);
+		this.dialogue.SetTree(index, out nextIndex);
 
 		rootPanel.SetActive(true);
 		Display();
 	}
-
-    public int GetNextDialogueIndex(int index)
-    {
-        return dialogue.GetNextTreeIndex(index);
-    }
 
 	private void Choice(int index)
 	{
@@ -79,7 +74,6 @@ public class DialogueInteraction : MonoBehaviour
 		{
 			InputManager.Instance.ChangeInput(InputType.Move);
 			rootPanel.SetActive(false);
-			return;
 		}
 
 		dialogue.Next();
@@ -87,7 +81,7 @@ public class DialogueInteraction : MonoBehaviour
 
 	private void Display()
 	{
-		phraseText.text = dialogue.GetCurrentDialogue();
+		phraseText.text = dialogue.GetCurrentPhrase();
 
 		choiceActor.ShowChoices(dialogue.GetChoices());
 		headDrawer.ShowSpeakerHead(dialogue.CurrentSpeaker());
