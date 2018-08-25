@@ -23,7 +23,7 @@ MonoBehaviour:
         y: 100
         width: 150
         height: 150
-      Text: 0 1
+      Text: Temp dialogue 1
       Type: 1
       NodeType: 0
       Parent: -1
@@ -57,11 +57,11 @@ MonoBehaviour:
         y: 261
         width: 150
         height: 150
-      Text: 2
+      Text: '...'
       Type: 0
       NodeType: 2
       Parent: 3
-      speaker: 0
+      speaker: 2
       activateQuests: []
       showCondition:
         states: []
@@ -81,7 +81,7 @@ MonoBehaviour:
         y: 121
         width: 150
         height: 150
-      Text: 0 2
+      Text: Temp dialogue 2
       Type: 0
       NodeType: 0
       Parent: -1
@@ -105,7 +105,7 @@ MonoBehaviour:
         y: 98
         width: 150
         height: 150
-      Text: 0 3
+      Text: Temp dialogue 3
       Type: 0
       NodeType: 0
       Parent: -1
@@ -129,7 +129,7 @@ MonoBehaviour:
         y: 169
         width: 150
         height: 150
-      Text: 1 1
+      Text: Shown because Talk_with_teacher - Ended
       Type: 0
       NodeType: 0
       Parent: -1
@@ -146,11 +146,11 @@ MonoBehaviour:
         y: 169
         width: 150
         height: 150
-      Text: failed
+      Text: Talk with teacher - failed
       Type: 0
       NodeType: 2
       Parent: 0
-      speaker: 0
+      speaker: 2
       activateQuests:
       - questType: 0
         questProgress: 3
@@ -228,7 +228,7 @@ MonoBehaviour:
         y: 164
         width: 150
         height: 150
-      Text: 3 1
+      Text: Shown because Talk_with_teacher is Not_started
       Type: 0
       NodeType: 0
       Parent: -1
@@ -245,11 +245,11 @@ MonoBehaviour:
         y: 164
         width: 150
         height: 150
-      Text: started
+      Text: Talk with teacher - started
       Type: 0
       NodeType: 2
       Parent: 0
-      speaker: 0
+      speaker: 2
       activateQuests:
       - questType: 0
         questProgress: 1
@@ -277,7 +277,7 @@ MonoBehaviour:
         y: 158
         width: 150
         height: 150
-      Text: 3 2
+      Text: Shown because Talk_with_teacher Started
       Type: 0
       NodeType: 0
       Parent: -1
@@ -294,11 +294,11 @@ MonoBehaviour:
         y: 161
         width: 150
         height: 150
-      Text: ended
+      Text: Talk with teacher - ended
       Type: 0
       NodeType: 2
       Parent: 0
-      speaker: 0
+      speaker: 2
       activateQuests:
       - questType: 0
         questProgress: 2
