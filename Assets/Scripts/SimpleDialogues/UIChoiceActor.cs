@@ -42,6 +42,14 @@ public class UIChoiceActor : MonoBehaviour
 			{
 				choiceButtons[i].ShowText(choices[i]);
 			}
+
+            // if there is only one choice - there is no choice at all
+            if (activeChoiceCount == 1)
+            {
+                choiceButtons[0].Deactivate();
+                currentChoice = 0;
+                activeChoiceCount = 0;
+            }
 		}
 	}
 

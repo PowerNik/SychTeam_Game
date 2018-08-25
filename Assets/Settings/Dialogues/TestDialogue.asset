@@ -24,7 +24,7 @@ MonoBehaviour:
         width: 150
         height: 150
       Text: 0 1
-      Type: 0
+      Type: 1
       NodeType: 0
       Parent: -1
       speaker: 0
@@ -41,7 +41,7 @@ MonoBehaviour:
         width: 150
         height: 150
       Text: 1
-      Type: 0
+      Type: 2
       NodeType: 1
       Parent: 0
       speaker: 0
