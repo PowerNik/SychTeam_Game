@@ -20,7 +20,7 @@ public class QuestCondition
 
     private bool GetConditionValue()
     {
-        if (states.Count == 0)
+        if (states.Count == 0 || ServiceLocator.QuestSystem == null)
         {
             return true;
         }

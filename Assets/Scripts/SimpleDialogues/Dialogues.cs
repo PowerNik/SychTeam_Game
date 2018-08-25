@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Dialogue", menuName = "Dialogue")]
+[CreateAssetMenu(fileName = "Dialogue", menuName = "Dialogue &D")]
 public class Dialogues : ScriptableObject
 {
-	public enum WindowTypes { Text, Choice, ChoiceAnswer }
+	public enum WindowTypes { Phrase, Decision, Option }
 	public enum NodeType { Start, Default, End }
 
 	private Window currentWindow;
@@ -84,7 +84,7 @@ public class Dialogues : ScriptableObject
 		public List<int> Connections = new List<int>();
 
 		public Window(int id, int parent, Rect newSize, 
-			WindowTypes type = WindowTypes.Text, NodeType nodeType = NodeType.Default)
+			WindowTypes type = WindowTypes.Phrase, NodeType nodeType = NodeType.Default)
 		{
 			ID = id;
 			Parent = parent;
@@ -96,7 +96,7 @@ public class Dialogues : ScriptableObject
 
 		public bool IsChoice()
 		{
-			return Type == WindowTypes.Choice;
+			return Type == WindowTypes.Decision;
 		}
 	}
 
@@ -155,7 +155,7 @@ public class Dialogues : ScriptableObject
 	{
 		ServiceLocator.QuestSystem.SetQuestProgress(currentWindow.activateQuests);
 
-		if (currentWindow.Type == WindowTypes.Choice)
+		if (currentWindow.Type == WindowTypes.Decision)
 			return currentWindow.Connections.Count;
 		else 
 			if (currentWindow.Connections.Count == 0)
@@ -173,7 +173,7 @@ public class Dialogues : ScriptableObject
 	/// <returns>null if the node isn't a decision node. An array of strings otherwise</returns>
 	public string[] GetChoices()
 	{
-		if (currentWindow.Type != WindowTypes.Choice)
+		if (currentWindow.Type != WindowTypes.Decision)
 			return new string[] { };
 		else
 		{
@@ -199,7 +199,7 @@ public class Dialogues : ScriptableObject
 	/// <returns></returns>
 	public bool NextChoice(string choice)
 	{
-		if (currentWindow.Type != WindowTypes.Choice)
+		if (currentWindow.Type != WindowTypes.Decision)
 			return false;
 		else
 		{

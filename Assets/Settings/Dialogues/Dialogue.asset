@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Name: Dialogue
   m_EditorClassIdentifier: 
   treeList:
-  - Name: 123
-    CurrentId: 4
+  - Name: 564
+    CurrentId: 6
     FirstWindow: 0
     Windows:
     - ID: 0
       Size:
         serializedVersion: 2
-        x: 91
-        y: 181
+        x: 156
+        y: 134
         width: 150
         height: 150
       Text: 
@@ -28,18 +28,16 @@ MonoBehaviour:
       NodeType: 0
       Parent: -1
       speaker: 0
-      activateQuests:
-      - questType: 0
-        questProgress: 0
+      activateQuests: []
       showCondition:
         states: []
         logics: 
-      Connections: 02000000
-    - ID: 1
+      Connections: 03000000
+    - ID: 2
       Size:
         serializedVersion: 2
-        x: 446
-        y: 96
+        x: 491
+        y: 50
         width: 150
         height: 150
       Text: 
@@ -49,36 +47,14 @@ MonoBehaviour:
       speaker: 0
       activateQuests: []
       showCondition:
-        states:
-        - questType: 0
-          questProgress: 0
-        - questType: 0
-          questProgress: 0
-        - questType: 0
-          questProgress: 0
-        - questType: 0
-          questProgress: 0
-        - questType: 0
-          questProgress: 0
-        - questType: 0
-          questProgress: 0
-        - questType: 0
-          questProgress: 0
-        - questType: 0
-          questProgress: 0
-        - questType: 0
-          questProgress: 0
-        - questType: 0
-          questProgress: 0
-        - questType: 0
-          questProgress: 0
-        logics: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
-      Connections: 03000000
-    - ID: 2
+        states: []
+        logics: 
+      Connections: 04000000
+    - ID: 3
       Size:
         serializedVersion: 2
-        x: 251
-        y: 181
+        x: 316
+        y: 134
         width: 150
         height: 150
       Text: 
@@ -86,44 +62,39 @@ MonoBehaviour:
       NodeType: 1
       Parent: 0
       speaker: 0
-      activateQuests:
-      - questType: 0
-        questProgress: 0
-      - questType: 0
-        questProgress: 0
-      - questType: 0
-        questProgress: 0
-      - questType: 0
-        questProgress: 0
-      - questType: 0
-        questProgress: 0
-      - questType: 0
-        questProgress: 0
-      - questType: 0
-        questProgress: 0
-      - questType: 0
-        questProgress: 0
-      - questType: 0
-        questProgress: 0
-      - questType: 0
-        questProgress: 0
-      - questType: 0
-        questProgress: 0
+      activateQuests: []
       showCondition:
         states: []
         logics: 
-      Connections: 01000000
-    - ID: 3
+      Connections: 02000000
+    - ID: 4
       Size:
         serializedVersion: 2
-        x: 630
-        y: 184
+        x: 721
+        y: 129
         width: 150
         height: 150
       Text: 
       Type: 0
-      NodeType: 2
-      Parent: 1
+      NodeType: 1
+      Parent: 2
+      speaker: 0
+      activateQuests: []
+      showCondition:
+        states: []
+        logics: 
+      Connections: 05000000
+    - ID: 5
+      Size:
+        serializedVersion: 2
+        x: 881
+        y: 129
+        width: 150
+        height: 150
+      Text: 
+      Type: 1
+      NodeType: 1
+      Parent: 4
       speaker: 0
       activateQuests: []
       showCondition:
@@ -131,5 +102,11 @@ MonoBehaviour:
         logics: 
       Connections: 
     showCondition:
-      states: []
-      logics: 
+      states:
+      - questType: 0
+        questProgress: 0
+      - questType: 0
+        questProgress: 0
+      - questType: 0
+        questProgress: 0
+      logics: 0000000000000000

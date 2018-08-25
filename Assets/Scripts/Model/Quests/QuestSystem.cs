@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "QuestSystem", menuName = "QuestSystem")]
+//[CreateAssetMenu(fileName = "QuestSystem", menuName = "QuestSystem")]
 public class QuestSystem : ScriptableObject
 {
 	public List<QuestState> questList = new List<QuestState>();
