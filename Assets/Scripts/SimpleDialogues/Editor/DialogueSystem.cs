@@ -271,20 +271,32 @@ public class DialogueSystem : EditorWindow {
 
     void RemoveWindow(object win)
     {
+        Undo.RecordObject(dialogue, "Dialogue");
+
         Dialogues.Window Curr = (Dialogues.Window)win;
         ClearIds();
 
-        //If the window we're removing is the start window, we have a custom check
         if (Curr.ID == dialogue.Tree.FirstWindowID)
         {
-            //We don't allow the user to remove the first node
+            dialogue.Tree.RemoveWindowByID(dialogue.Tree.FirstWindowID);
+
             if (Curr.Connections.Count == 0)
+            {
+                dialogue.Tree.CurrentId = 0;
                 dialogue.Tree.FirstWindowID = -562;
+            }
+
+            if (Curr.Connections.Count == 1)
+            {
+                dialogue.Tree.FirstWindowID = Curr.Connections[0];
+                dialogue.Tree.FirstWindow.Parent = -1;
+                dialogue.Tree.FirstWindow.NodeType = NodeType.Start;
+            }
             return;
         }
 
         Dialogues.Window PrevWindow = FindPreviousWindow(Curr);
-        //If the window to remove has connections
+
         if (Curr.Connections.Count != 0 && PrevWindow != null)
         {
             //We go through it's connections, and add them to the previous window
@@ -293,20 +305,20 @@ public class DialogueSystem : EditorWindow {
                 PrevWindow.Connections.Add(Curr.Connections[i]);
             }
         }
+
         if (PrevWindow != null)
         {
             if (Curr.Connections.Count > 1 && PrevWindow.Type == WindowTypes.Phrase)
                 PrevWindow.Type = WindowTypes.Decision;
-            if (PrevWindow.ID == dialogue.Tree.FirstWindowID)
-                AddWindowBefore(PrevWindow);
-            //Removes the window from existence
+
             PrevWindow.Connections.Remove(Curr.ID);
-            Curr.Parent = -2;
+
             for (int i = 0; i < Curr.Connections.Count; i++)
             {
-                dialogue.Tree.GetWindow(Curr.Connections[i]).Parent = -2;
+                dialogue.Tree.GetWindow(Curr.Connections[i]).Parent = PrevWindow.ID;
             }
         }
+
         dialogue.Tree.Windows.Remove(Curr);
         ClearIds();
 

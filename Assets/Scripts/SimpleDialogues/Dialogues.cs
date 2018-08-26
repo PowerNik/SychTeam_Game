@@ -11,7 +11,7 @@ public class Dialogues : ScriptableObject
 {
     private Window currentWindow;
 
-    [HideInInspector]
+    //[HideInInspector]
     [SerializeField]
     private List<WindowTree> treeList = new List<WindowTree>();
 
@@ -59,6 +59,11 @@ public class Dialogues : ScriptableObject
         {
             Name = name;
             CurrentId = 0;
+        }
+
+        public void RemoveWindowByID(int ID)
+        {
+            Windows.Remove(GetWindow(ID));
         }
 
         public Window GetWindow(int ID)
@@ -165,10 +170,6 @@ public class Dialogues : ScriptableObject
         return currentWindow.speaker;
     }
 
-    /// <summary>
-    /// Moves to the next item in the list.
-    /// </summary>
-    /// <returns># = Amount of choices it has | 0 = success | -1 = end</returns>
     public int Next()
     {
         ServiceLocator.QuestSystem.SetQuestProgress(currentWindow.activateQuests);
@@ -185,10 +186,6 @@ public class Dialogues : ScriptableObject
         }
     }
 
-    /// <summary>
-    /// Returns the choices the current node has. 
-    /// </summary>
-    /// <returns>null if the node isn't a decision node. An array of strings otherwise</returns>
     public string[] GetChoices()
     {
         if (currentWindow.Type != WindowTypes.Decision)
@@ -210,11 +207,6 @@ public class Dialogues : ScriptableObject
         }
     }
 
-    /// <summary>
-    /// Moves to the next selected choice
-    /// </summary>
-    /// <param name="choice"></param>
-    /// <returns></returns>
     public bool NextChoice(string choice)
     {
         if (currentWindow.Type != WindowTypes.Decision)
