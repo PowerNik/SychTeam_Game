@@ -902,8 +902,9 @@ public class DialogueSystem : EditorWindow {
 		}
         else
         {
-            if (GUI.Button(new Rect(35, 125, 80, 20), "Quests: " + Win.activateQuests.Count))
-                ShowQuests(windowID, false);
+            if(Win.NodeType == NodeType.End || FindPreviousWindow(Win).Type == WindowTypes.Option)
+                if (GUI.Button(new Rect(35, 125, 80, 20), "Quests: " + Win.activateQuests.Count))
+                    ShowQuests(windowID, false);
         }
 
 		GUI.DragWindow();
