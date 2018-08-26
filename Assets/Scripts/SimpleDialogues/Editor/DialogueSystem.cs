@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -767,7 +766,7 @@ public class DialogueSystem : EditorWindow {
 
             if (isNewWindowShow)
             {
-                NewTree = GUI.Window(99999, NewTree, AddNewWindow, "Add New Dialogue Tree");
+                NewTree = GUI.Window(99999, NewTree, AddNewTree, "Add New Dialogue Tree");
             }
 
             EndWindows();
@@ -838,7 +837,7 @@ public class DialogueSystem : EditorWindow {
         if (isNewWindowShow && dialogue.TreeCount == 0)
         {
             BeginWindows();
-            NewTree = GUI.Window(99999, NewTree, AddNewWindow, "Add New Dialogue Tree");
+            NewTree = GUI.Window(99999, NewTree, AddNewTree, "Add New Dialogue Tree");
             EndWindows();
         }
 
@@ -848,15 +847,23 @@ public class DialogueSystem : EditorWindow {
         {
             if (focusedWindow == this)
             {
-                // shift + x
-                if (Event.current.Equals(Event.KeyboardEvent("#x")))
-                    textEditor.Cut();
-                // shift + c
-                if (Event.current.Equals(Event.KeyboardEvent("#c")))
-                    textEditor.Copy();
-                // shift + v
-                if (Event.current.Equals(Event.KeyboardEvent("#v")))
-                    textEditor.Paste();
+                if (Event.current.control)
+                {
+                    switch(Event.current.keyCode)
+                    {
+                        case KeyCode.X:
+                        textEditor.Cut();
+                            break;
+
+                        case KeyCode.C:
+                            textEditor.Copy();
+                            break;
+
+                        case KeyCode.V:
+                            textEditor.Paste();
+                            break;
+                    }
+                }
             }
         }
 
@@ -876,7 +883,7 @@ public class DialogueSystem : EditorWindow {
             if(GUI.Button(new Rect(135, 0, 15, 15), "+")) AddWindowAfter(Win) ;
         }
 
-        Win.Text = GUI.TextArea(new Rect(0, 15, xSize, ySize), Win.Text);
+        Win.Text = EditorGUI.TextArea(new Rect(0, 15, xSize, ySize), Win.Text);
 
 		GUI.Label(new Rect(0, 100, 60, 20), "Speaker: ");
 		Win.speaker = (Speaker)EditorGUI.EnumPopup(
@@ -935,7 +942,7 @@ public class DialogueSystem : EditorWindow {
         QuestWindow.ShowQuestWindow(obj, questProp, label, SaveChanges, true);
     }
 
-    void AddNewWindow(int winID)
+    void AddNewTree(int winID)
     {
         NewTreeName = GUI.TextField(new Rect(100, 50, 200, 20), NewTreeName);
         GUI.Label(new Rect(100, 25, 200, 20), NewTreeInfo);
