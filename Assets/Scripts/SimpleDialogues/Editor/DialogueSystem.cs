@@ -59,18 +59,18 @@ public class DialogueSystem : EditorWindow {
     Dialogues.Window CreateNewWindow(Vector2 Position, int ParentId, WindowTypes Type = WindowTypes.Phrase)
     {
         Dialogues.Window NewWindow = new Dialogues.Window(
-			dialogue.CurrentTree.CurrentId, 
+			dialogue.Tree.CurrentId, 
 			ParentId, 
 			new Rect(Position, WindowSize), 
 			Type);
-        dialogue.CurrentTree.CurrentId++;
+        dialogue.Tree.CurrentId++;
 		EditorUtility.SetDirty(dialogue);
         return NewWindow;
     }
 
     bool CheckDialogueExists()
     {
-		var curTree = dialogue.CurrentTree;
+		var curTree = dialogue.Tree;
 		if (curTree.FirstWindowID == -562 || curTree.FirstWindow.Connections == null)
             return false;
         else
@@ -85,17 +85,17 @@ public class DialogueSystem : EditorWindow {
     Dialogues.Window FindPreviousWindow(Dialogues.Window winToFind)
     {
         //If this is the first window, there is no previous
-        if (dialogue.CurrentTree.FirstWindowID == winToFind.ID)
+        if (dialogue.Tree.FirstWindowID == winToFind.ID)
             return null;
         //Checks all the connections
-        for (int i = 0; i < dialogue.CurrentTree.Windows.Count; i++)
+        for (int i = 0; i < dialogue.Tree.Windows.Count; i++)
         {
             //If any of the connections is equal to the one we're trying to find, we return this Window
-            for (int j = 0; j < dialogue.CurrentTree.Windows[i].Connections.Count; j++)
+            for (int j = 0; j < dialogue.Tree.Windows[i].Connections.Count; j++)
             {
-                Dialogues.Window Curr = dialogue.CurrentTree.GetWindow(dialogue.CurrentTree.Windows[i].Connections[j]);
+                Dialogues.Window Curr = dialogue.Tree.GetWindow(dialogue.Tree.Windows[i].Connections[j]);
                 if (Curr == winToFind)
-                    return dialogue.CurrentTree.Windows[i];
+                    return dialogue.Tree.Windows[i];
             }
         }
         return null;
@@ -103,19 +103,19 @@ public class DialogueSystem : EditorWindow {
 
     List<Dialogues.Window> FindPreviousWindows(Dialogues.Window winToFind)
     {
-        if (dialogue.CurrentTree.FirstWindowID == winToFind.ID)
+        if (dialogue.Tree.FirstWindowID == winToFind.ID)
             return null;
         List<Dialogues.Window> TheList = new List<Dialogues.Window>();
 
         //Checks all the connections
-        for (int i = 0; i < dialogue.CurrentTree.Windows.Count; i++)
+        for (int i = 0; i < dialogue.Tree.Windows.Count; i++)
         {
             //If any of the connections is equal to the one we're trying to find, we return this Window
-            for (int j = 0; j < dialogue.CurrentTree.Windows[i].Connections.Count; j++)
+            for (int j = 0; j < dialogue.Tree.Windows[i].Connections.Count; j++)
             {
-                Dialogues.Window Curr = dialogue.CurrentTree.GetWindow(dialogue.CurrentTree.Windows[i].Connections[j]);
+                Dialogues.Window Curr = dialogue.Tree.GetWindow(dialogue.Tree.Windows[i].Connections[j]);
                 if (Curr == winToFind)
-                    TheList.Add(dialogue.CurrentTree.Windows[i]);
+                    TheList.Add(dialogue.Tree.Windows[i]);
             }
         }
 
@@ -124,9 +124,9 @@ public class DialogueSystem : EditorWindow {
 
     bool Find(Dialogues.Window win, Dialogues.Window winToFind)
     {
-        for (int i = 0; i < dialogue.CurrentTree.Windows.Count; i++)
+        for (int i = 0; i < dialogue.Tree.Windows.Count; i++)
         {
-            if (dialogue.CurrentTree.Windows[i] == winToFind)
+            if (dialogue.Tree.Windows[i] == winToFind)
                 return true;
         }
         return false;
@@ -199,76 +199,70 @@ public class DialogueSystem : EditorWindow {
         Undo.RecordObject(dialogue, "Dialogue");
 
         object[] Data = (object[])data;
-        //Retrieving Data
         Vector2 Position = (Vector2)Data[0];
-        Dialogues.Window WindowClickedOn = (Dialogues.Window)Data[1];
+        Dialogues.Window curWin = (Dialogues.Window)Data[1];
         WindowTypes Type = (WindowTypes)Data[2];
 
-        int ParentId = -1;
-        if (WindowClickedOn != null)
-            ParentId = WindowClickedOn.ID;
-        //Creates the new window
-        Dialogues.Window NewlyCreatedWindow = CreateNewWindow(Position, ParentId, Type);
+        int ParentId = curWin != null? curWin.ID: -1;
+        Dialogues.Window newWin = CreateNewWindow(Position, ParentId, Type);
 
         //Checks if this is the first node
-        if (WindowClickedOn == null)
+        if (curWin == null)
         {
-            //It is the first node
-            dialogue.CurrentTree.FirstWindowID = NewlyCreatedWindow.ID;
+            dialogue.Tree.FirstWindowID = newWin.ID;
         }
         else
         {
-            //It is not the first node
-            WindowClickedOn.Connections.Add(NewlyCreatedWindow.ID);
+            curWin.Connections.Add(newWin.ID);
         }
-        dialogue.CurrentTree.Windows.Add(NewlyCreatedWindow);
+
+        dialogue.Tree.Windows.Add(newWin);
 		EditorUtility.SetDirty(dialogue);
-		return NewlyCreatedWindow;
+		return newWin;
     }
 
-    void AddWindowBefore(object win)
+    void AddWindowBefore(Dialogues.Window curWin)
     {
         Undo.RecordObject(dialogue, "Dialogue");
 
-        Dialogues.Window Curr = (Dialogues.Window)win;
-
-        //If this is the first window
-        if (Curr.ID == dialogue.CurrentTree.FirstWindowID)
+        if (curWin.ID == dialogue.Tree.FirstWindowID)
         {
-            Dialogues.Window NewlyCreatedWindow = CreateNewWindow(Curr.Size.position - new Vector2(160, 0),-1);
-            //The newly created window adds the first node as a connection
-            NewlyCreatedWindow.Connections.Add(dialogue.CurrentTree.FirstWindowID);
-            //The first node is set to the new node
-            dialogue.CurrentTree.FirstWindowID = NewlyCreatedWindow.ID;
-            dialogue.CurrentTree.Windows.Add(NewlyCreatedWindow);
+            Dialogues.Window newWin = CreateNewWindow(curWin.Size.position - new Vector2(160, 0), -1);
+            newWin.Connections.Add(dialogue.Tree.FirstWindowID);
+            dialogue.Tree.FirstWindow.Parent = newWin.ID;
+
+            dialogue.Tree.FirstWindowID = newWin.ID;
+            dialogue.Tree.Windows.Add(newWin);
             return;
         }
-        Dialogues.Window PrevWindow = FindPreviousWindow(Curr);
+
+        Dialogues.Window PrevWindow = FindPreviousWindow(curWin);
         if (PrevWindow != null)
         {
-            object[] Vals = { Curr.Size.position - new Vector2(160, 0), PrevWindow, WindowTypes.Phrase };
-            AddWindow(Vals).Connections.Add(Curr.ID);
-            PrevWindow.Connections.Remove(Curr.ID);
+            object[] Vals = { curWin.Size.position - new Vector2(160, 0), PrevWindow, WindowTypes.Phrase };
+            var newWin = AddWindow(Vals);
+            newWin.Connections.Add(curWin.ID);
+            PrevWindow.Connections.Remove(curWin.ID);
+
+            curWin.Parent = newWin.ID;
         }
 
 		EditorUtility.SetDirty(dialogue);
 	}
 
-    void AddWindowAfter(object win)
+    void AddWindowAfter(Dialogues.Window curWin)
     {
         Undo.RecordObject(dialogue, "Dialogue");
 
-		Dialogues.Window Curr = (Dialogues.Window)win;
+        Dialogues.Window newWin = CreateNewWindow(curWin.Size.position + new Vector2(160, 0), curWin.ID);
 
-        Dialogues.Window NewlyCreatedWindow = CreateNewWindow(Curr.Size.position + new Vector2(160, 0), Curr.ID);
-
-        for (int i = 0; i < Curr.Connections.Count; i++)
+        for (int i = 0; i < curWin.Connections.Count; i++)
         {
-            NewlyCreatedWindow.Connections.Add(Curr.Connections[i]);
+            newWin.Connections.Add(curWin.Connections[i]);
         }
-        Curr.Connections.Clear();
-        Curr.Connections.Add(NewlyCreatedWindow.ID);
-        dialogue.CurrentTree.Windows.Add(NewlyCreatedWindow);
+        curWin.Connections.Clear();
+        curWin.Connections.Add(newWin.ID);
+        dialogue.Tree.Windows.Add(newWin);
 
 		EditorUtility.SetDirty(dialogue);
     }
@@ -279,11 +273,11 @@ public class DialogueSystem : EditorWindow {
         ClearIds();
 
         //If the window we're removing is the start window, we have a custom check
-        if (Curr.ID == dialogue.CurrentTree.FirstWindowID)
+        if (Curr.ID == dialogue.Tree.FirstWindowID)
         {
             //We don't allow the user to remove the first node
             if (Curr.Connections.Count == 0)
-                dialogue.CurrentTree.FirstWindowID = -562;
+                dialogue.Tree.FirstWindowID = -562;
             return;
         }
 
@@ -301,17 +295,17 @@ public class DialogueSystem : EditorWindow {
         {
             if (Curr.Connections.Count > 1 && PrevWindow.Type == WindowTypes.Phrase)
                 PrevWindow.Type = WindowTypes.Decision;
-            if (PrevWindow.ID == dialogue.CurrentTree.FirstWindowID)
+            if (PrevWindow.ID == dialogue.Tree.FirstWindowID)
                 AddWindowBefore(PrevWindow);
             //Removes the window from existence
             PrevWindow.Connections.Remove(Curr.ID);
             Curr.Parent = -2;
             for (int i = 0; i < Curr.Connections.Count; i++)
             {
-                dialogue.CurrentTree.GetWindow(Curr.Connections[i]).Parent = -2;
+                dialogue.Tree.GetWindow(Curr.Connections[i]).Parent = -2;
             }
         }
-        dialogue.CurrentTree.Windows.Remove(Curr);
+        dialogue.Tree.Windows.Remove(Curr);
         ClearIds();
 
 		EditorUtility.SetDirty(dialogue);
@@ -321,10 +315,10 @@ public class DialogueSystem : EditorWindow {
     {
         Dialogues.Window Curr = (Dialogues.Window)win;
         //If this is the first node, removes everything
-        if (Curr.ID == dialogue.CurrentTree.FirstWindowID)
+        if (Curr.ID == dialogue.Tree.FirstWindowID)
         {
             if (Curr.Connections.Count == 0)
-                dialogue.CurrentTree.FirstWindowID = -562;
+                dialogue.Tree.FirstWindowID = -562;
             return;
         }
         //Simply removes the node, and lets everything connected die
@@ -339,14 +333,14 @@ public class DialogueSystem : EditorWindow {
     {
         if (dialogue.TreeCount == 0) return;
 
-        for (int i = 0; i < dialogue.CurrentTree.Windows.Count; i++)
+        for (int i = 0; i < dialogue.Tree.Windows.Count; i++)
         {
-            List<Dialogues.Window> WindowList = FindPreviousWindows(dialogue.CurrentTree.Windows[i]);
+            List<Dialogues.Window> WindowList = FindPreviousWindows(dialogue.Tree.Windows[i]);
             if ((WindowList == null || WindowList.Count == 0) 
-                && dialogue.CurrentTree.Windows[i].NodeType != NodeType.Start
-                && dialogue.CurrentTree.Windows.Count > 1)
+                && dialogue.Tree.Windows[i].NodeType != NodeType.Start
+                && dialogue.Tree.Windows.Count > 1)
             {
-                RemoveWindow(dialogue.CurrentTree.Windows[i]);
+                RemoveWindow(dialogue.Tree.Windows[i]);
             }
         }
 		EditorUtility.SetDirty(dialogue);
@@ -410,19 +404,19 @@ public class DialogueSystem : EditorWindow {
         int ToRemove = (int)Data[1];
 
         bool Remove = true;
-        for (int i = 0; i < dialogue.CurrentTree.Windows.Count; i++)
+        for (int i = 0; i < dialogue.Tree.Windows.Count; i++)
         {
-            for (int j = 0; j < dialogue.CurrentTree.Windows[i].Connections.Count; j++)
+            for (int j = 0; j < dialogue.Tree.Windows[i].Connections.Count; j++)
             {
-                if(dialogue.CurrentTree.Windows[i].Connections[j] == ToRemove 
-                    && Curr.ID != dialogue.CurrentTree.Windows[i].Connections[j])
+                if(dialogue.Tree.Windows[i].Connections[j] == ToRemove 
+                    && Curr.ID != dialogue.Tree.Windows[i].Connections[j])
                 {
                     Remove = false;
                 }
             }
         }
         if(Remove)
-            dialogue.CurrentTree.Windows.Remove(dialogue.CurrentTree.GetWindow(ToRemove));
+            dialogue.Tree.Windows.Remove(dialogue.Tree.GetWindow(ToRemove));
         Curr.Connections.Remove(ToRemove);
 
 		EditorUtility.SetDirty(dialogue);
@@ -457,8 +451,8 @@ public class DialogueSystem : EditorWindow {
 
     void Clear()
     {
-        dialogue.CurrentTree.Windows.Clear();
-        dialogue.CurrentTree.FirstWindowID = -562;
+        dialogue.Tree.Windows.Clear();
+        dialogue.Tree.FirstWindowID = -562;
 
 		EditorUtility.SetDirty(dialogue);
 	}
@@ -476,11 +470,11 @@ public class DialogueSystem : EditorWindow {
     {
         if (!CheckDialogueExists()) return;
         //Goes through the window's connections
-        for (int j = 0; j < dialogue.CurrentTree.Windows.Count; j++)
+        for (int j = 0; j < dialogue.Tree.Windows.Count; j++)
         {
-            for (int i = 0; i < dialogue.CurrentTree.Windows[j].Connections.Count; i++)
+            for (int i = 0; i < dialogue.Tree.Windows[j].Connections.Count; i++)
             {
-                Dialogues.Window WindowList = dialogue.CurrentTree.Windows[j];
+                Dialogues.Window WindowList = dialogue.Tree.Windows[j];
 
                 Color Use = LineColor;
 
@@ -489,23 +483,23 @@ public class DialogueSystem : EditorWindow {
 
                 //Draws a line with the correct color between the current window and connection
                 Handles.DrawBezier(WindowList.Size.center, 
-                    dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center, 
+                    dialogue.Tree.GetWindow(WindowList.Connections[i]).Size.center, 
                     new Vector2(WindowList.Size.center.x, WindowList.Size.center.y), 
-                    new Vector2(dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.x, 
-                    dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).
+                    new Vector2(dialogue.Tree.GetWindow(WindowList.Connections[i]).Size.center.x, 
+                    dialogue.Tree.GetWindow(WindowList.Connections[i]).
                     Size.center.y), Use, null, 5f);
 
                 Use = LineColor;
 
                 //Finds the center between the points
-                float xPos = (WindowList.Size.center.x) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.x - WindowList.Size.center.x) / 2);
-                float yPos = (WindowList.Size.center.y) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.y - WindowList.Size.center.y) / 2);
+                float xPos = (WindowList.Size.center.x) + ((dialogue.Tree.GetWindow(WindowList.Connections[i]).Size.center.x - WindowList.Size.center.x) / 2);
+                float yPos = (WindowList.Size.center.y) + ((dialogue.Tree.GetWindow(WindowList.Connections[i]).Size.center.y - WindowList.Size.center.y) / 2);
                 Vector2 Middle = new Vector2(xPos, yPos);
 
                 //Draws arrows 
                 DrawConnectionArrow(WindowList.Size.center, Middle, true);
-                DrawConnectionArrow(Middle, dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center, true);
-                DrawConnectionArrow(WindowList.Size.center, dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center, true);
+                DrawConnectionArrow(Middle, dialogue.Tree.GetWindow(WindowList.Connections[i]).Size.center, true);
+                DrawConnectionArrow(WindowList.Size.center, dialogue.Tree.GetWindow(WindowList.Connections[i]).Size.center, true);
             }
         }
 
@@ -520,9 +514,9 @@ public class DialogueSystem : EditorWindow {
     {
         if (CheckDialogue() && !CheckDialogueExists()) return;
 
-        for (int j = 0; j < dialogue.CurrentTree.Windows.Count; j++)
+        for (int j = 0; j < dialogue.Tree.Windows.Count; j++)
         {
-            Dialogues.Window win = dialogue.CurrentTree.Windows[j];
+            Dialogues.Window win = dialogue.Tree.Windows[j];
 
             List<Dialogues.Window> prevWindows = FindPreviousWindows(win);
             if (prevWindows != null)
@@ -546,9 +540,9 @@ public class DialogueSystem : EditorWindow {
             string BoxName = win.Type.ToString();
 
             //Determines what type of node it is
-            if (win.Connections.Count == 0 && win.ID != dialogue.CurrentTree.FirstWindowID && win.Type != WindowTypes.Decision)
+            if (win.Connections.Count == 0 && win.ID != dialogue.Tree.FirstWindowID && win.Type != WindowTypes.Decision)
                 win.NodeType = NodeType.End;
-            else if (win.ID == dialogue.CurrentTree.FirstWindowID)
+            else if (win.ID == dialogue.Tree.FirstWindowID)
                 win.NodeType = NodeType.Start;
             else
                 win.NodeType = NodeType.Default;
@@ -607,9 +601,9 @@ public class DialogueSystem : EditorWindow {
             return;
         }
 
-        for (int j = 0; j < dialogue.CurrentTree.Windows.Count; j++)
+        for (int j = 0; j < dialogue.Tree.Windows.Count; j++)
         {
-            Dialogues.Window WindowList = dialogue.CurrentTree.Windows[j];
+            Dialogues.Window WindowList = dialogue.Tree.Windows[j];
 
             //Accounts for the area when the user has scrolled
             Rect AdjustedArea = new Rect(WindowList.Size.position - ScrollPosition, WindowList.Size.size);
@@ -629,14 +623,14 @@ public class DialogueSystem : EditorWindow {
             //Checks if the mouse is close enough to a line
             for (int i = 0; i < WindowList.Connections.Count; i++)
             {
-                float xPos = (WindowList.Size.center.x) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.x - WindowList.Size.center.x) / 2);
-                float yPos = (WindowList.Size.center.y) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.y - WindowList.Size.center.y) / 2);
+                float xPos = (WindowList.Size.center.x) + ((dialogue.Tree.GetWindow(WindowList.Connections[i]).Size.center.x - WindowList.Size.center.x) / 2);
+                float yPos = (WindowList.Size.center.y) + ((dialogue.Tree.GetWindow(WindowList.Connections[i]).Size.center.y - WindowList.Size.center.y) / 2);
                 Vector2 Middle = new Vector2(xPos, yPos);
                 float xPosLower = (WindowList.Size.center.x) + ((Middle.x - WindowList.Size.center.x) / 2);
                 float yPosLower = (WindowList.Size.center.y) + ((Middle.y - WindowList.Size.center.y) / 2);
                 Vector2 Lower = new Vector2(xPosLower, yPosLower);
-                float xPosHigher = (Middle.x) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.x - Middle.x) / 2);
-                float yPosHigher = (Middle.y) + ((dialogue.CurrentTree.GetWindow(WindowList.Connections[i]).Size.center.y - Middle.y) / 2);
+                float xPosHigher = (Middle.x) + ((dialogue.Tree.GetWindow(WindowList.Connections[i]).Size.center.x - Middle.x) / 2);
+                float yPosHigher = (Middle.y) + ((dialogue.Tree.GetWindow(WindowList.Connections[i]).Size.center.y - Middle.y) / 2);
                 Vector2 Higher = new Vector2(xPosHigher, yPosHigher);
 
 
@@ -761,7 +755,7 @@ public class DialogueSystem : EditorWindow {
 
             GUI.EndScrollView();
             GUILayout.BeginArea(new Rect(0, 20, Screen.width, 20));
-            dialogue.CurrentTreeIndex = GUILayout.Toolbar(dialogue.CurrentTreeIndex, dialogue.TabsNames);
+            dialogue.TreeIndex = GUILayout.Toolbar(dialogue.TreeIndex, dialogue.TabsNames);
             GUILayout.EndArea();
 
             if (new Rect(0, 0, position.width, position.height).Contains(Event.current.mousePosition))
@@ -872,7 +866,7 @@ public class DialogueSystem : EditorWindow {
 
         if (Win.NodeType == NodeType.Start)
         {
-            if (GUI.Button(new Rect(10, 125, 130, 20), "Tree conditions: " + dialogue.CurrentTree.Importance))
+            if (GUI.Button(new Rect(10, 125, 130, 20), "Tree conditions: " + dialogue.Tree.Importance))
                 TreeShowCondition();
         }
         else if (Win.Type == WindowTypes.Option)
@@ -891,11 +885,11 @@ public class DialogueSystem : EditorWindow {
 
 	private void ShowQuests(int windowID, bool isConditions)
 	{
-		int windowIndex = dialogue.CurrentTree.GetWindowIndex(windowID);
+		int windowIndex = dialogue.Tree.GetWindowIndex(windowID);
 
 		SerializedObject obj = new SerializedObject(dialogue);
 		var treeList = obj.FindProperty("treeList");
-		var curTree = treeList.GetArrayElementAtIndex(dialogue.CurrentTreeIndex);
+		var curTree = treeList.GetArrayElementAtIndex(dialogue.TreeIndex);
 		var curWindow = curTree.FindPropertyRelative("Windows").GetArrayElementAtIndex(windowIndex);
 
 		var questProp = curWindow.FindPropertyRelative("activateQuests");
@@ -903,8 +897,8 @@ public class DialogueSystem : EditorWindow {
 			questProp = curWindow.FindPropertyRelative("showCondition");
 
 		string label = "Dialogue: " + dialogue.name;
-		label += "\nTab: " + dialogue.CurrentTree.Name;
-		label += "\nWindow text: " + dialogue.CurrentTree.GetWindow(windowID).Text;
+		label += "\nTab: " + dialogue.Tree.Name;
+		label += "\nWindow text: " + dialogue.Tree.GetWindow(windowID).Text;
 
 		QuestWindow.ShowQuestWindow(obj, questProp, label, SaveChanges, isConditions);
 	}
@@ -913,11 +907,11 @@ public class DialogueSystem : EditorWindow {
     {
         SerializedObject obj = new SerializedObject(dialogue);
         var treeList = obj.FindProperty("treeList");
-        var curTree = treeList.GetArrayElementAtIndex(dialogue.CurrentTreeIndex);
+        var curTree = treeList.GetArrayElementAtIndex(dialogue.TreeIndex);
         var questProp = curTree.FindPropertyRelative("showCondition");
 
         string label = "Dialogue: " + dialogue.name;
-        label += "\nTab: " + dialogue.CurrentTree.Name;
+        label += "\nTab: " + dialogue.Tree.Name;
 
         QuestWindow.ShowQuestWindow(obj, questProp, label, SaveChanges, true);
     }
