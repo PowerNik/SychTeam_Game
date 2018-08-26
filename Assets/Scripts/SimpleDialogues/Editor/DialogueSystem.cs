@@ -327,20 +327,23 @@ public class DialogueSystem : EditorWindow {
 
     void RemoveWindowTree(object win)
     {
+        Undo.RecordObject(dialogue, "Dialogue");
+
         Dialogues.Window Curr = (Dialogues.Window)win;
         //If this is the first node, removes everything
         if (Curr.ID == dialogue.Tree.FirstWindowID)
         {
-            if (Curr.Connections.Count == 0)
-                dialogue.Tree.FirstWindowID = -562;
+            dialogue.Tree.Windows.Clear();
+            dialogue.Tree.FirstWindowID = -562;
+            dialogue.Tree.CurrentId = 0;
             return;
         }
+
         //Simply removes the node, and lets everything connected die
         Dialogues.Window PrevWindow = FindPreviousWindow(Curr);
         Curr.Parent = -2;
         PrevWindow.Connections.Remove(Curr.ID);
 		EditorUtility.SetDirty(dialogue);
-
 	}
 
 	void CheckConnections()
@@ -413,6 +416,8 @@ public class DialogueSystem : EditorWindow {
 
 	void RemoveConnection(object data)
     {
+        Undo.RecordObject(dialogue, "Dialogue");
+
         object[] Data = (object[])data;
         Dialogues.Window Curr = (Dialogues.Window)Data[0];
         int ToRemove = (int)Data[1];
