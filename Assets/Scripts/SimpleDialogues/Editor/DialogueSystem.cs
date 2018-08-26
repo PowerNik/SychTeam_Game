@@ -259,7 +259,9 @@ public class DialogueSystem : EditorWindow {
         for (int i = 0; i < curWin.Connections.Count; i++)
         {
             newWin.Connections.Add(curWin.Connections[i]);
+            dialogue.Tree.GetWindow(newWin.Connections[i]).Parent = newWin.ID;
         }
+
         curWin.Connections.Clear();
         curWin.Connections.Add(newWin.ID);
         dialogue.Tree.Windows.Add(newWin);
