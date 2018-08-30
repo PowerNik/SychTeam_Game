@@ -241,8 +241,8 @@ MonoBehaviour:
     - ID: 1
       Size:
         serializedVersion: 2
-        x: 390
-        y: 164
+        x: 337
+        y: 163
         width: 150
         height: 150
       Text: Talk with teacher - started
