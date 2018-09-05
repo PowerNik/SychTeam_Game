@@ -1,16 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Interactable : MonoBehaviour
 {
 	public event System.Action Interacted;
+    public UnityEvent unityEvent;
 
-	public void Interact()
-	{
-		if (Interacted != null)
-		{
-			Interacted();
-		}
-	}
+    public void Interact()
+    {
+        Interacted?.Invoke();
+        unityEvent?.Invoke();
+    }
 }
